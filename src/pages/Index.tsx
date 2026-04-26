@@ -325,18 +325,25 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      {showLoader && <div className="fixed inset-0 z-[80] grid place-items-center bg-background"><div className="relative grid size-36 place-items-center border border-primary/35"><div className="absolute inset-3 animate-spin border border-primary/20 border-t-primary" /><Scissors className="size-10 text-primary" /><p className="absolute -bottom-10 font-display text-2xl tracking-[0.22em] text-primary">MN</p></div></div>}
+      <div className="pointer-events-none fixed z-[70] hidden size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-2xl transition-transform duration-100 md:block" style={{ left: cursorPosition.x, top: cursorPosition.y }} />
+      <a href="https://wa.me/493012345678?text=Hello%20Maison%20Noir%2C%20I%20would%20like%20to%20book%20an%20appointment." target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center border border-primary bg-card text-primary shadow-elegant transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground"><MessageCircle className="size-6" /></a>
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <a href="#home" className="font-display text-xl uppercase tracking-[0.28em] text-primary">Maison Noir</a>
           <div className="hidden items-center gap-7 text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex">
-            <a className="transition-colors hover:text-primary" href="#services">Services</a>
-            <a className="transition-colors hover:text-primary" href="#team">Stylists</a>
-            <a className="transition-colors hover:text-primary" href="#gallery">Gallery</a>
-            <a className="transition-colors hover:text-primary" href="#contact">Contact</a>
+            {navLinks.map(([label, href]) => <a key={href} className="transition-colors hover:text-primary" href={href}>{label}</a>)}
           </div>
-          <Button variant="hero" size="sm" asChild><a href="#booking">Book Now</a></Button>
+          <div className="hidden md:block"><Button variant="hero" size="sm" asChild><a href="#booking">Book Now</a></Button></div>
+          <button type="button" aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
         </div>
       </nav>
+      <div className={`fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-opacity md:hidden ${mobileMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setMobileMenuOpen(false)} />
+      <aside className={`fixed right-0 top-0 z-[61] h-full w-[min(84vw,22rem)] border-l border-primary/25 bg-card p-6 shadow-elegant transition-transform duration-500 ease-out md:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">Maison Noir</span><button type="button" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
+        <div className="mt-12 grid gap-5 text-lg text-muted-foreground">{navLinks.map(([label, href]) => <a key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="border-b border-border pb-4 font-display text-3xl text-foreground transition-colors hover:text-primary">{label}</a>)}</div>
+        <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#booking" onClick={() => setMobileMenuOpen(false)}>Book Now</a></Button>
+      </aside>
 
       <section id="home" className="relative flex min-h-screen items-center overflow-hidden pt-24">
         <img src={heroImage} alt="Luxury barbershop and hair salon interior" className="absolute inset-0 h-full w-full object-cover" width={1600} height={1000} />
