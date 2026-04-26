@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
 import {
   CalendarDays,
+  CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -18,7 +20,9 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/salon-hero.jpg";
@@ -54,6 +58,11 @@ type Testimonial = {
   service_name: string | null;
 };
 
+type BookedSlot = {
+  appointment_start: string;
+  appointment_end: string;
+};
+
 const stylistImages: Record<string, string> = {
   "Amara Vale": amaraImage,
   "Leon Hart": leonImage,
@@ -81,6 +90,9 @@ const fallbackTestimonials: Testimonial[] = [
   { customer_name: "Elena S.", rating: 5, quote: "My color looks expensive, natural, and effortless. Already booked the next visit.", service_name: "Gloss Color" },
 ];
 
+const bookingCategories = ["Men", "Women", "Treatments"];
+const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+
 const bookingSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
@@ -102,6 +114,8 @@ const newsletterSchema = z.object({ email: z.string().trim().email().max(255) })
 
 const formatPrice = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(cents / 100);
 
+const formatBookingDateTime = (value: string) => value ? format(new Date(value), "PPP 'at' HH:mm") : "Not selected";
+
 const isOpenNow = () => {
   const now = new Date();
   const day = now.getDay();
@@ -117,6 +131,11 @@ const Index = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [beforeAfter, setBeforeAfter] = useState(52);
+  const [bookingStep, setBookingStep] = useState(1);
+  const [bookingCategory, setBookingCategory] = useState("Men");
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState("");
+  const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
   const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -162,9 +181,46 @@ const Index = () => {
     return () => observer.disconnect();
   }, [services.length, stylists.length, testimonials.length]);
 
+  useEffect(() => {
+    if (!selectedDate || !selectedTime) return;
+    const [hours, minutes] = selectedTime.split(":").map(Number);
+    const nextDate = new Date(selectedDate);
+    nextDate.setHours(hours, minutes, 0, 0);
+    setBooking((current) => ({ ...current, appointment_start: nextDate.toISOString().slice(0, 16) }));
+  }, [selectedDate, selectedTime]);
+
+  useEffect(() => {
+    const loadBookedSlots = async () => {
+      if (!booking.stylist_id || !selectedDate) {
+        setBookedSlots([]);
+        return;
+      }
+      const rpc = supabase.rpc as unknown as (fn: string, args: Record<string, string>) => Promise<{ data: BookedSlot[] | null }>;
+      const { data } = await rpc("get_booked_appointment_slots", {
+        _stylist_id: booking.stylist_id,
+        _day: format(selectedDate, "yyyy-MM-dd"),
+      });
+      setBookedSlots(data ?? []);
+    };
+    loadBookedSlots();
+  }, [booking.stylist_id, selectedDate]);
+
   const selectedService = services.find((service) => service.id === booking.service_id) ?? services[0];
+  const selectedStylist = stylists.find((stylist) => stylist.id === booking.stylist_id);
   const serviceGroups = useMemo(() => ["Men", "Women", "Kids", "Treatments"].map((category) => ({ category, items: services.filter((service) => service.category === category) })), [services]);
+  const filteredBookingServices = services.filter((service) => service.category === bookingCategory);
   const todayIso = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const availableTimeSlots = timeSlots.filter((slot) => {
+    if (!selectedDate) return true;
+    const [hours, minutes] = slot.split(":").map(Number);
+    const slotStart = new Date(selectedDate);
+    slotStart.setHours(hours, minutes, 0, 0);
+    const slotEnd = new Date(slotStart.getTime() + (selectedService?.duration_minutes ?? 45) * 60 * 1000);
+    if (slotStart <= new Date()) return false;
+    return !bookedSlots.some((booked) => slotStart < new Date(booked.appointment_end) && slotEnd > new Date(booked.appointment_start));
+  });
 
   const submitBooking = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -194,6 +250,9 @@ const Index = () => {
     }
     toast.success("Appointment requested. Email confirmation is ready to connect.");
     setBooking({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
+    setSelectedDate(undefined);
+    setSelectedTime("");
+    setBookingStep(1);
   };
 
   const submitContact = async (event: React.FormEvent) => {
@@ -286,36 +345,22 @@ const Index = () => {
       </section>
 
       <section id="booking" className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
           <div>
             <p className="section-kicker">Online booking</p>
-            <h2 className="section-title">Reserve your chair in minutes.</h2>
-            <p className="section-copy">Choose a ritual, preferred stylist, and available time. Confirmation, reschedule, and cancellation flows are structured for email automation.</p>
+            <h2 className="section-title">Reserve your chair in six seamless steps.</h2>
+            <p className="section-copy">A guided booking concierge with live stylist availability, secure appointment storage, and a final review before confirmation.</p>
             <div className="mt-8 grid gap-3">
-              {services.slice(0, 3).map((service) => <button key={service.id} type="button" onClick={() => setBooking((current) => ({ ...current, service_id: service.id }))} className="group flex items-center justify-between border border-border bg-card p-4 text-left transition-all hover:border-primary/50 hover:bg-secondary">
-                <span><span className="block font-display text-xl text-foreground">{service.name}</span><span className="text-sm text-muted-foreground">{service.duration_minutes} min</span></span>
-                <span className="text-primary transition-transform group-hover:translate-x-1">{formatPrice(service.price_cents)}</span>
-              </button>)}
+              {["Category", "Service", "Stylist", "Date & time", "Details", "Confirm"].map((label, index) => <button key={label} type="button" onClick={() => setBookingStep(index + 1)} className={`flex items-center gap-4 border p-4 text-left transition-all ${bookingStep === index + 1 ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/50"}`}><span className="flex size-8 items-center justify-center border border-primary/40 font-display text-primary">{index + 1}</span><span className="text-sm uppercase tracking-[0.2em] text-muted-foreground">{label}</span></button>)}
             </div>
           </div>
           <form onSubmit={submitBooking} className="border border-primary/20 bg-card p-5 shadow-elegant md:p-8">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Input placeholder="Full name" value={booking.customer_name} onChange={(event) => setBooking({ ...booking, customer_name: event.target.value })} />
-              <Input placeholder="Email" type="email" value={booking.customer_email} onChange={(event) => setBooking({ ...booking, customer_email: event.target.value })} />
-              <Input placeholder="Phone" value={booking.customer_phone} onChange={(event) => setBooking({ ...booking, customer_phone: event.target.value })} />
-              <Input type="datetime-local" min={todayIso} value={booking.appointment_start} onChange={(event) => setBooking({ ...booking, appointment_start: event.target.value })} />
-              <select aria-label="Select service" className="field-control" value={booking.service_id} onChange={(event) => setBooking({ ...booking, service_id: event.target.value })}>
-                <option value="">Select service</option>{services.map((service) => <option key={service.id} value={service.id}>{service.name} · {formatPrice(service.price_cents)}</option>)}
-              </select>
-              <select aria-label="Select stylist" className="field-control" value={booking.stylist_id} onChange={(event) => setBooking({ ...booking, stylist_id: event.target.value })}>
-                <option value="">Select stylist</option>{stylists.map((stylist) => <option key={stylist.id} value={stylist.id}>{stylist.name} · {stylist.specialty}</option>)}
-              </select>
-            </div>
-            <Textarea className="mt-4 min-h-28" placeholder="Notes, allergies, preferred finish" value={booking.notes} onChange={(event) => setBooking({ ...booking, notes: event.target.value })} />
-            <div className="mt-6 flex flex-col justify-between gap-4 border-t border-border pt-5 sm:flex-row sm:items-center">
-              <p className="text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Real-time calendar foundation with secure appointment storage.</p>
-              <Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Requesting…" : "Confirm appointment"}</Button>
-            </div>
+            {bookingStep === 1 && <div className="animate-fade-up"><p className="section-kicker">Step 1</p><h3 className="font-display text-4xl text-foreground">Choose a service category.</h3><div className="mt-8 grid gap-4 md:grid-cols-3">{bookingCategories.map((category) => <button key={category} type="button" onClick={() => { setBookingCategory(category); setBooking({ ...booking, service_id: "" }); setBookingStep(2); }} className={`border p-6 text-left transition-all hover:-translate-y-1 hover:border-primary ${bookingCategory === category ? "border-primary bg-secondary" : "border-border bg-background"}`}><Scissors className="mb-5 size-7 text-primary" /><span className="font-display text-3xl text-foreground">{category}</span><span className="mt-3 block text-sm text-muted-foreground">{services.filter((service) => service.category === category).length} rituals available</span></button>)}</div></div>}
+            {bookingStep === 2 && <div className="animate-fade-up"><p className="section-kicker">Step 2</p><h3 className="font-display text-4xl text-foreground">Select your {bookingCategory.toLowerCase()} service.</h3><div className="mt-8 grid gap-4">{filteredBookingServices.map((service) => <button key={service.id} type="button" onClick={() => { setBooking({ ...booking, service_id: service.id }); setBookingStep(3); }} className={`group flex flex-col justify-between gap-4 border p-5 text-left transition-all hover:border-primary md:flex-row md:items-center ${booking.service_id === service.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><span><span className="block font-display text-2xl text-foreground">{service.name}</span><span className="mt-1 block text-sm text-muted-foreground">{service.description}</span></span><span className="flex items-center gap-5 text-primary"><span>{service.duration_minutes} min</span><span className="font-display text-2xl">{formatPrice(service.price_cents)}</span></span></button>)}</div></div>}
+            {bookingStep === 3 && <div className="animate-fade-up"><p className="section-kicker">Step 3</p><h3 className="font-display text-4xl text-foreground">Pick your stylist.</h3><div className="mt-8 grid gap-5 md:grid-cols-3">{stylists.map((stylist) => <button key={stylist.id} type="button" onClick={() => { setBooking({ ...booking, stylist_id: stylist.id }); setBookingStep(4); }} className={`overflow-hidden border text-left transition-all hover:-translate-y-1 hover:border-primary ${booking.stylist_id === stylist.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="aspect-[4/5] w-full object-cover" loading="lazy" /><span className="block p-4"><span className="block font-display text-2xl text-foreground">{stylist.name}</span><span className="mt-1 block text-sm text-primary">{stylist.specialty}</span></span></button>)}</div></div>}
+            {bookingStep === 4 && <div className="animate-fade-up"><p className="section-kicker">Step 4</p><h3 className="font-display text-4xl text-foreground">Choose date and time.</h3><div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Popover><PopoverTrigger asChild><Button variant="glass" size="xl" className="justify-start text-left"><CalendarIcon />{selectedDate ? format(selectedDate, "PPP") : "Pick a date"}</Button></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={selectedDate} onSelect={(date) => { setSelectedDate(date); setSelectedTime(""); }} disabled={(date) => date < today || date.getDay() === 0} initialFocus /></PopoverContent></Popover><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{timeSlots.map((slot) => { const isAvailable = availableTimeSlots.includes(slot); return <button key={slot} type="button" disabled={!selectedDate || !isAvailable} onClick={() => { setSelectedTime(slot); setBookingStep(5); }} className={`border px-4 py-3 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 ${selectedTime === slot ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary hover:text-primary"}`}>{slot}</button>; })}</div></div><p className="mt-5 text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Unavailable slots are hidden using live appointment data.</p></div>}
+            {bookingStep === 5 && <div className="animate-fade-up"><p className="section-kicker">Step 5</p><h3 className="font-display text-4xl text-foreground">Enter your details.</h3><div className="mt-8 grid gap-4 md:grid-cols-2"><Input placeholder="Full name" value={booking.customer_name} onChange={(event) => setBooking({ ...booking, customer_name: event.target.value })} /><Input placeholder="Email" type="email" value={booking.customer_email} onChange={(event) => setBooking({ ...booking, customer_email: event.target.value })} /><Input placeholder="Phone" className="md:col-span-2" value={booking.customer_phone} onChange={(event) => setBooking({ ...booking, customer_phone: event.target.value })} /></div><Textarea className="mt-4 min-h-28" placeholder="Notes, allergies, preferred finish" value={booking.notes} onChange={(event) => setBooking({ ...booking, notes: event.target.value })} /><Button className="mt-6" variant="hero" size="lg" type="button" onClick={() => setBookingStep(6)}>Review booking</Button></div>}
+            {bookingStep === 6 && <div className="animate-fade-up"><p className="section-kicker">Step 6</p><h3 className="font-display text-4xl text-foreground">Confirm your appointment.</h3><div className="mt-8 grid gap-4 border border-border bg-background p-5"><p><span className="text-muted-foreground">Service:</span> <span className="text-foreground">{selectedService?.name} · {formatPrice(selectedService?.price_cents ?? 0)}</span></p><p><span className="text-muted-foreground">Duration:</span> <span className="text-foreground">{selectedService?.duration_minutes} minutes</span></p><p><span className="text-muted-foreground">Stylist:</span> <span className="text-foreground">{selectedStylist?.name ?? "Not selected"}</span></p><p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{formatBookingDateTime(booking.appointment_start)}</span></p><p><span className="text-muted-foreground">Guest:</span> <span className="text-foreground">{booking.customer_name || "Not entered"} · {booking.customer_email || "No email"}</span></p></div><div className="mt-6 flex flex-col gap-3 sm:flex-row"><Button variant="glass" type="button" onClick={() => setBookingStep(5)}>Edit details</Button><Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Requesting…" : "Confirm appointment"}</Button></div></div>}
           </form>
         </div>
       </section>
