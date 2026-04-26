@@ -40,6 +40,7 @@ export default {
         "hero-overlay": "var(--hero-overlay)",
         section: "var(--section)",
         "gold-gradient": "var(--gold-gradient)",
+        "grain-texture": "var(--grain-texture)",
       },
       boxShadow: { elegant: "var(--shadow-elegant)", card: "var(--shadow-card)" },
       borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)" },

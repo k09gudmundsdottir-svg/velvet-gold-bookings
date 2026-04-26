@@ -5,19 +5,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gold-gradient text-primary-foreground shadow-elegant transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card",
-        glass: "border border-primary/35 bg-card/55 text-foreground backdrop-blur-md transition-all duration-300 hover:border-primary hover:bg-secondary",
-        velvet: "bg-background text-foreground transition-all duration-300 hover:bg-secondary",
+        default: "bg-primary text-primary-foreground hover:border-primary hover:bg-primary/90 hover:shadow-elegant",
+        destructive: "bg-destructive text-destructive-foreground hover:border-primary hover:bg-destructive/90",
+        outline: "border-input bg-background hover:border-primary hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/80",
+        ghost: "hover:border-primary hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:border-primary hover:underline",
+        hero: "border-primary/55 bg-gold-gradient text-primary-foreground shadow-elegant hover:-translate-y-0.5 hover:border-primary hover:shadow-card",
+        glass: "border-primary/35 bg-card/55 text-foreground backdrop-blur-md hover:border-primary hover:bg-secondary hover:shadow-elegant",
+        velvet: "bg-background text-foreground hover:border-primary hover:bg-secondary hover:text-primary",
       },
       size: {
         default: "h-10 px-4 py-2",

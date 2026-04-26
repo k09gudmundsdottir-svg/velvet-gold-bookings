@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    --background: 32 17% 5%;
-    --foreground: 42 37% 92%;
-    --card: 30 16% 8%;
-    --card-foreground: 42 37% 92%;
-    --popover: 30 16% 8%;
-    --popover-foreground: 42 37% 92%;
-    --primary: 42 63% 56%;
-    --primary-foreground: 28 25% 7%;
+    --background: 0 0% 5%;
+    --foreground: 36 39% 94%;
+    --card: 30 12% 8%;
+    --card-foreground: 36 39% 94%;
+    --popover: 30 12% 8%;
+    --popover-foreground: 36 39% 94%;
+    --primary: 44 54% 54%;
+    --primary-foreground: 0 0% 5%;
     --secondary: 30 18% 13%;
     --secondary-foreground: 42 37% 92%;
     --muted: 30 13% 15%;
@@ -25,12 +25,13 @@
     --success: 142 48% 54%;
     --border: 39 24% 21%;
     --input: 39 24% 18%;
-    --ring: 42 63% 56%;
+    --ring: 44 54% 54%;
     --radius: 0.25rem;
     --hero-overlay: linear-gradient(90deg, hsl(32 17% 5% / 0.92), hsl(32 17% 5% / 0.58), hsl(32 17% 5% / 0.84));
     --section: linear-gradient(180deg, hsl(30 16% 8%), hsl(32 17% 5%));
-    --gold-gradient: linear-gradient(135deg, hsl(42 63% 56%), hsl(31 75% 35%));
-    --shadow-elegant: 0 32px 80px -36px hsl(42 63% 56% / 0.55);
+    --gold-gradient: linear-gradient(135deg, hsl(44 54% 54%), hsl(38 62% 38%));
+    --grain-texture: radial-gradient(circle at 18% 22%, hsl(var(--primary) / 0.16) 0 1px, transparent 1px), radial-gradient(circle at 78% 32%, hsl(var(--foreground) / 0.09) 0 1px, transparent 1px), radial-gradient(circle at 42% 74%, hsl(var(--primary) / 0.10) 0 1px, transparent 1px);
+    --shadow-elegant: 0 32px 80px -36px hsl(44 54% 54% / 0.55);
     --shadow-card: 0 22px 55px -34px hsl(0 0% 0% / 0.9);
     --sidebar-background: 30 16% 8%;
     --sidebar-foreground: 42 37% 92%;
@@ -43,14 +44,14 @@
   }
 
   .dark {
-    --background: 32 17% 5%;
-    --foreground: 42 37% 92%;
-    --card: 30 16% 8%;
-    --card-foreground: 42 37% 92%;
-    --popover: 30 16% 8%;
-    --popover-foreground: 42 37% 92%;
-    --primary: 42 63% 56%;
-    --primary-foreground: 28 25% 7%;
+    --background: 0 0% 5%;
+    --foreground: 36 39% 94%;
+    --card: 30 12% 8%;
+    --card-foreground: 36 39% 94%;
+    --popover: 30 12% 8%;
+    --popover-foreground: 36 39% 94%;
+    --primary: 44 54% 54%;
+    --primary-foreground: 0 0% 5%;
     --secondary: 30 18% 13%;
     --secondary-foreground: 42 37% 92%;
     --muted: 30 13% 15%;
@@ -61,7 +62,7 @@
     --destructive-foreground: 42 37% 92%;
     --border: 39 24% 21%;
     --input: 39 24% 18%;
-    --ring: 42 63% 56%;
+    --ring: 44 54% 54%;
   }
 }
 
@@ -78,4 +79,7 @@
   .section-copy { @apply text-base leading-8 text-muted-foreground; }
   .field-control { @apply h-10 w-full border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50; }
   .gallery-image { @apply w-full border border-border object-cover shadow-card transition duration-500 hover:-translate-y-1 hover:border-primary/45; }
+  .reveal-on-scroll { @apply translate-y-8 opacity-0 transition-all duration-700 ease-out; }
+  .reveal-on-scroll.is-visible { @apply translate-y-0 opacity-100; }
+  .hero-grain { background-image: var(--grain-texture); background-size: 160px 160px, 220px 220px, 300px 300px; mix-blend-mode: screen; }
 }
