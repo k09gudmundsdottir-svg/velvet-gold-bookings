@@ -143,6 +143,25 @@ const Index = () => {
     return () => window.clearInterval(timer);
   }, [testimonials.length]);
 
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal-on-scroll"));
+    if (reduceMotion) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14, rootMargin: "0px 0px -60px 0px" });
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [services.length, stylists.length, testimonials.length]);
+
   const selectedService = services.find((service) => service.id === booking.service_id) ?? services[0];
   const serviceGroups = useMemo(() => ["Men", "Women", "Kids", "Treatments"].map((category) => ({ category, items: services.filter((service) => service.category === category) })), [services]);
   const todayIso = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
@@ -234,6 +253,7 @@ const Index = () => {
       <section id="home" className="relative flex min-h-screen items-center overflow-hidden pt-24">
         <img src={heroImage} alt="Luxury barbershop and hair salon interior" className="absolute inset-0 h-full w-full object-cover" width={1600} height={1000} />
         <div className="absolute inset-0 bg-hero-overlay" />
+        <div className="hero-grain pointer-events-none absolute inset-0 opacity-45" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_var(--x,30%)_var(--y,40%),hsl(var(--primary)/0.22),transparent_28rem)] motion-safe:transition-[background]" onPointerMove={(event) => {
           const target = event.currentTarget as HTMLElement;
           target.style.setProperty("--x", `${event.clientX}px`);
@@ -265,7 +285,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="booking" className="bg-section py-24">
+      <section id="booking" className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
           <div>
             <p className="section-kicker">Online booking</p>
@@ -300,7 +320,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="services" className="py-24">
+      <section id="services" className="reveal-on-scroll py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Services & pricing</p><h2 className="section-title">A curated menu of rituals.</h2></div><p className="section-copy md:max-w-md">Every service includes consultation, tailored product finish, and aftercare guidance.</p></div>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -312,7 +332,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="team" className="bg-section py-24">
+      <section id="team" className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <p className="section-kicker">Team</p><h2 className="section-title mb-12">Artists with a signature hand.</h2>
           <div className="grid gap-6 md:grid-cols-3">
@@ -324,7 +344,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="gallery" className="py-24">
+      <section id="gallery" className="reveal-on-scroll py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mb-12 grid gap-6 md:grid-cols-2 md:items-end"><div><p className="section-kicker">Gallery</p><h2 className="section-title">Transformations in chiaroscuro.</h2></div><p className="section-copy">Masonry-inspired editorial work, with a tactile before/after reveal for transformation storytelling.</p></div>
           <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
@@ -341,7 +361,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="bg-section py-24">
+      <section className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[1fr_0.8fr] lg:px-8">
           <div className="border border-border bg-card p-8 shadow-card md:p-12">
             <div className="mb-6 flex gap-1 text-primary">{Array.from({ length: testimonials[activeTestimonial]?.rating ?? 5 }).map((_, index) => <Star key={index} className="size-5 fill-current" />)}</div>
@@ -355,7 +375,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="contact" className="py-24">
+      <section id="contact" className="reveal-on-scroll py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div><p className="section-kicker">Contact & location</p><h2 className="section-title">Visit the atelier.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />Königsallee 18, Düsseldorf</p><p><Phone className="mr-3 inline size-5 text-primary" />+49 30 1234 5678</p><p><Mail className="mr-3 inline size-5 text-primary" />concierge@maisonnoir.example</p></div>
             <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title="Maison Noir map" src="https://maps.google.com/maps?q=D%C3%BCsseldorf%20K%C3%B6nigsallee&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
@@ -367,7 +387,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="bg-section py-24">
+      <section className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8"><p className="section-kicker">Internal admin</p><h2 className="section-title mb-10">Operational command room.</h2><div className="grid gap-5 md:grid-cols-3">{[
           [CalendarDays, "Upcoming appointments", "24", "Confirm, reschedule, cancel"],
           [Users, "Customer list", "1,842", "Profiles and loyalty points"],
