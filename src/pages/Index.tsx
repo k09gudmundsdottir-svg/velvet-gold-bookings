@@ -90,6 +90,9 @@ const fallbackTestimonials: Testimonial[] = [
   { customer_name: "Elena S.", rating: 5, quote: "My color looks expensive, natural, and effortless. Already booked the next visit.", service_name: "Gloss Color" },
 ];
 
+const bookingCategories = ["Men", "Women", "Treatments"];
+const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+
 const bookingSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
@@ -110,6 +113,8 @@ const contactSchema = z.object({
 const newsletterSchema = z.object({ email: z.string().trim().email().max(255) });
 
 const formatPrice = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(cents / 100);
+
+const formatBookingDateTime = (value: string) => value ? format(new Date(value), "PPP 'at' HH:mm") : "Not selected";
 
 const isOpenNow = () => {
   const now = new Date();
