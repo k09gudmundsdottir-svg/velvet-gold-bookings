@@ -12,7 +12,7 @@ import {
   Menu,
   MessageCircle,
   MapPin,
-  Telefon,
+  Phone,
   Scissors,
   Sparkles,
   Star,
@@ -37,13 +37,13 @@ import galleryMen from "@/assets/gallery-men.jpg";
 import galleryColor from "@/assets/gallery-color.jpg";
 import galleryTreatment from "@/assets/gallery-treatment.jpg";
 
-type Leistung = {
+type Service = {
   id: string;
   name: string;
   category: string;
   description: string | null;
   price_cents: number;
-  duration_Minuten: number;
+  duration_minutes: number;
 };
 
 type Stylist = {
@@ -68,21 +68,21 @@ type BookedSlot = {
 };
 
 const stylistImages: Record<string, string> = {
-  "Amara Vale": amaraImage,
-  "Leon Hart": leonImage,
-  "Sofia Marin": sofiaImage,
+  "Anna Berger": amaraImage,
+  "Lukas Steiner": leonImage,
+  "Mira Novak": sofiaImage,
 };
 
-const fallbackLeistungs: Leistung[] = [
-  { id: "cut-men", name: "Signature Cut & Finish", category: "Men", description: "Precision scissor cut, hot towel, neckline shave", price_cents: 5200, duration_Minuten: 45 },
-  { id: "beard", name: "Executive Beard Ritual", category: "Men", description: "Beard sculpting with oils and warm compress", price_cents: 3800, duration_Minuten: 30 },
-  { id: "cut-women", name: "Couture Cut & Blowout", category: "Women", description: "Shape, movement and polished finish", price_cents: 7800, duration_Minuten: 75 },
-  { id: "gloss", name: "Gloss Color Refresh", category: "Women", description: "Tonal gloss and shine treatment", price_cents: 9600, duration_Minuten: 90 },
-  { id: "kids", name: "Junior Trim", category: "Kids", description: "Gentle trim for younger guests", price_cents: 3200, duration_Minuten: 30 },
-  { id: "keratin", name: "Keratin Silk Treatment", category: "Treatments", description: "Smoothing ritual with mirror-like shine", price_cents: 18500, duration_Minuten: 120 },
+const fallbackServices: Leistung[] = [
+  { id: "cut-men", name: "Signature Cut & Finish", category: "Men", description: "Precision scissor cut, hot towel, neckline shave", price_cents: 5200, duration_minutes: 45 },
+  { id: "beard", name: "Executive Beard Ritual", category: "Men", description: "Beard sculpting with oils and warm compress", price_cents: 3800, duration_minutes: 30 },
+  { id: "cut-women", name: "Couture Cut & Blowout", category: "Women", description: "Shape, movement and polished finish", price_cents: 7800, duration_minutes: 75 },
+  { id: "gloss", name: "Gloss Color Refresh", category: "Women", description: "Tonal gloss and shine treatment", price_cents: 9600, duration_minutes: 90 },
+  { id: "kids", name: "Junior Trim", category: "Kids", description: "Gentle trim for younger guests", price_cents: 3200, duration_minutes: 30 },
+  { id: "keratin", name: "Keratin Silk Treatment", category: "Treatments", description: "Smoothing ritual with mirror-like shine", price_cents: 18500, duration_minutes: 120 },
 ];
 
-const fallbackStylists: Stylist[] = [
+const fallbackTeam: Stylist[] = [
   { id: "amara", name: "Amara Vale", role: "Creative Director", specialty: "Precision cuts & editorial styling", bio: "Known for architectural shapes and soft, wearable luxury.", years_experience: 12 },
   { id: "leon", name: "Leon Hart", role: "Master Barber", specialty: "Classic barbering & beard rituals", bio: "A detail-obsessed barber blending heritage technique with modern finish.", years_experience: 9 },
   { id: "sofia", name: "Sofia Marin", role: "Color Specialist", specialty: "Balayage, gloss, dimensional color", bio: "Creates luminous color stories with a low-maintenance grow-out.", years_experience: 8 },
@@ -97,14 +97,14 @@ const fallbackTestimonials: Testimonial[] = [
 const bookingCategories = ["Men", "Women", "Treatments"];
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 const navLinks = [
-  ["Leistungs", "#services"],
-  ["Stylists", "#team"],
+  ["Leistungen", "#services"],
+  ["Team", "#team"],
   ["Galerie", "#gallery"],
-  ["Contact", "#contact"],
+  ["Kontakt", "#contact"],
 ];
 const salonName = "[DEIN SALON NAME]";
 const salonAddress = "[DEINE ADRESSE]";
-const salonTelefon = "[DEINE NUMMER]";
+const salonPhone = "[DEINE NUMMER]";
 const whatsappHref = "https://wa.me/43123456789?text=Hallo%20%5BDEIN%20SALON%20NAME%5D%2C%20ich%20m%C3%B6chte%20gerne%20einen%20Termin%20buchen.";
 const instagramHandle = "deinsalonname";
 const categoryLabels: Record<string, string> = { Men: "Herren", Women: "Damen", Treatments: "Treatments", Kids: "Kinder" };
@@ -142,13 +142,13 @@ const isOpenNow = () => {
 };
 
 const Index = () => {
-  const [services, setLeistungs] = useState<Leistung[]>(fallbackLeistungs);
-  const [stylists, setStylists] = useState<Stylist[]>(fallbackStylists);
+  const [services, setServices] = useState<Service[]>(fallbackServices);
+  const [stylists, setTeam] = useState<Stylist[]>(fallbackTeam);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [beforeAfter, setBeforeAfter] = useState(52);
   const [bookingStep, setBookingStep] = useState(1);
-  const [bookingKategorie, setBookingKategorie] = useState("Men");
+  const [bookingCategory, setBookingCategory] = useState("Men");
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
@@ -157,21 +157,21 @@ const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: -120, y: -120 });
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
-  const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
-  const [newsletterE-Mail, setNewsletterE-Mail] = useState("");
+  const [contact, setKontakt] = useState({ name: "", email: "", phone: "", message: "" });
+  const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isBooking, setIsBooking] = useState(false);
-  const [isContacting, setIsContacting] = useState(false);
+  const [isKontakting, setIsKontakting] = useState(false);
   const openNow = isOpenNow();
 
   useEffect(() => {
     const loadSalonData = async () => {
       const [{ data: serviceData }, { data: stylistData }, { data: testimonialData }] = await Promise.all([
-        supabase.from("services").select("id,name,category,description,price_cents,duration_Minuten").eq("is_active", true).order("sort_order"),
+        supabase.from("services").select("id,name,category,description,price_cents,duration_minutes").eq("is_active", true).order("sort_order"),
         supabase.from("stylists").select("id,name,role,specialty,bio,years_experience").eq("is_active", true).order("sort_order"),
         supabase.from("testimonials").select("customer_name,rating,quote,service_name").eq("is_featured", true).order("created_at", { ascending: false }),
       ]);
-      if (serviceData?.length) setLeistungs(serviceData);
-      if (stylistData?.length) setStylists(stylistData);
+      if (serviceData?.length) setServices(serviceData);
+      if (stylistData?.length) setTeam(stylistData);
       if (testimonialData?.length) setTestimonials(testimonialData);
     };
     loadSalonData();
@@ -218,9 +218,9 @@ const Index = () => {
 
   useEffect(() => {
     if (!selectedDate || !selectedTime) return;
-    const [hours, Minuten] = selectedTime.split(":").map(Number);
+    const [hours, minutes] = selectedTime.split(":").map(Number);
     const nextDate = new Date(selectedDate);
-    nextDate.setHours(hours, Minuten, 0, 0);
+    nextDate.setHours(hours, minutes, 0, 0);
     setBooking((current) => ({ ...current, appointment_start: nextDate.toISOString().slice(0, 16) }));
   }, [selectedDate, selectedTime]);
 
@@ -240,19 +240,19 @@ const Index = () => {
     loadBookedSlots();
   }, [booking.stylist_id, selectedDate]);
 
-  const selectedLeistung = services.find((service) => service.id === booking.service_id) ?? services[0];
+  const selectedService = services.find((service) => service.id === booking.service_id) ?? services[0];
   const selectedStylist = stylists.find((stylist) => stylist.id === booking.stylist_id);
   const serviceGroups = useMemo(() => ["Men", "Women", "Kids", "Treatments"].map((category) => ({ category, items: services.filter((service) => service.category === category) })), [services]);
-  const filteredBookingLeistungs = services.filter((service) => service.category === bookingKategorie);
+  const filteredBookingServices = services.filter((service) => service.category === bookingCategory);
   const todayIso = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const availableTimeSlots = timeSlots.filter((slot) => {
     if (!selectedDate) return true;
-    const [hours, Minuten] = slot.split(":").map(Number);
+    const [hours, minutes] = slot.split(":").map(Number);
     const slotStart = new Date(selectedDate);
-    slotStart.setHours(hours, Minuten, 0, 0);
-    const slotEnd = new Date(slotStart.getTime() + (selectedLeistung?.duration_Minuten ?? 45) * 60 * 1000);
+    slotStart.setHours(hours, minutes, 0, 0);
+    const slotEnd = new Date(slotStart.getTime() + (selectedService?.duration_minutes ?? 45) * 60 * 1000);
     if (slotStart <= new Date()) return false;
     return !bookedSlots.some((booked) => slotStart < new Date(booked.appointment_end) && slotEnd > new Date(booked.appointment_start));
   });
@@ -266,7 +266,7 @@ const Index = () => {
     }
     setIsBooking(true);
     const start = new Date(parsed.data.appointment_start);
-    const duration = selectedLeistung?.duration_Minuten ?? 45;
+    const duration = selectedService?.duration_minutes ?? 45;
     const end = new Date(start.getTime() + duration * 60 * 1000);
     const { error } = await supabase.from("appointments").insert({
       customer_name: parsed.data.customer_name,
@@ -290,32 +290,32 @@ const Index = () => {
     setBookingStep(1);
   };
 
-  const submitContact = async (event: React.FormEvent) => {
+  const submitKontakt = async (event: React.FormEvent) => {
     event.preventDefault();
     const parsed = contactSchema.safeParse(contact);
     if (!parsed.success) {
       toast.error("Bitte geben Sie gültige Kontaktdaten ein.");
       return;
     }
-    setIsContacting(true);
+    setIsKontakting(true);
     const { error } = await supabase.from("contact_messages").insert({
       name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone || null,
       message: parsed.data.message,
     });
-    setIsContacting(false);
+    setIsKontakting(false);
     if (error) {
       toast.error("Nachricht konnte nicht gesendet werden.");
       return;
     }
     toast.success("Nachricht gesendet — wir melden uns in Kürze.");
-    setContact({ name: "", email: "", phone: "", message: "" });
+    setKontakt({ name: "", email: "", phone: "", message: "" });
   };
 
   const submitNewsletter = async (event: React.FormEvent) => {
     event.preventDefault();
-    const parsed = newsletterSchema.safeParse({ email: newsletterE-Mail });
+    const parsed = newsletterSchema.safeParse({ email: newsletterEmail });
     if (!parsed.success) {
       toast.error("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
       return;
@@ -326,7 +326,7 @@ const Index = () => {
       return;
     }
     toast.success("Willkommen — Ihr Willkommenscode ist reserviert.");
-    setNewsletterE-Mail("");
+    setNewsletterEmail("");
   };
 
   return (
@@ -367,7 +367,7 @@ const Index = () => {
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Ein hochwertiger Friseur- und Barber-Salon in Österreich für Gäste, die präzises Handwerk, persönliche Beratung und ein perfektes Finish erwarten.</p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Button variant="hero" size="xl" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"} <CalendarDays /></a></Button>
-              <Button variant="glass" size="xl" asChild><a href="tel:+43123456789"><Telefon /> Anrufen</a></Button>
+              <Button variant="glass" size="xl" asChild><a href="tel:+43123456789"><Phone /> Anrufen</a></Button>
             </div>
           </div>
           <div className="grid gap-4 animate-fade-up [animation-delay:180ms]">
@@ -397,23 +397,23 @@ const Index = () => {
             </div>
           </div>
           <form onSubmit={submitBooking} className="border border-primary/20 bg-card p-5 shadow-elegant md:p-8">
-            {bookingStep === 1 && <div className="animate-fade-up"><p className="section-kicker">Step 1</p><h3 className="font-display text-4xl text-foreground">Wählen Sie eine Kategorie.</h3><div className="mt-8 grid gap-4 md:grid-cols-3">{bookingCategories.map((category) => <button key={category} type="button" onClick={() => { setBookingKategorie(category); setBooking({ ...booking, service_id: "" }); setBookingStep(2); }} className={`border p-6 text-left transition-all hover:-translate-y-1 hover:border-primary ${bookingKategorie === category ? "border-primary bg-secondary" : "border-border bg-background"}`}><Scissors className="mb-5 size-7 text-primary" /><span className="font-display text-3xl text-foreground">{category}</span><span className="mt-3 block text-sm text-muted-foreground">{services.filter((service) => service.category === category).length} Leistungen verfügbar</span></button>)}</div></div>}
-            {bookingStep === 2 && <div className="animate-fade-up"><p className="section-kicker">Step 2</p><h3 className="font-display text-4xl text-foreground">Select your {bookingKategorie.toLowerCase()} service.</h3><div className="mt-8 grid gap-4">{filteredBookingLeistungs.map((service) => <button key={service.id} type="button" onClick={() => { setBooking({ ...booking, service_id: service.id }); setBookingStep(3); }} className={`group flex flex-col justify-between gap-4 border p-5 text-left transition-all hover:border-primary md:flex-row md:items-center ${booking.service_id === service.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><span><span className="block font-display text-2xl text-foreground">{service.name}</span><span className="mt-1 block text-sm text-muted-foreground">{service.description}</span></span><span className="flex items-center gap-5 text-primary"><span>{service.duration_Minuten} min</span><span className="font-display text-2xl">{formatPrice(service.price_cents)}</span></span></button>)}</div></div>}
+            {bookingStep === 1 && <div className="animate-fade-up"><p className="section-kicker">Step 1</p><h3 className="font-display text-4xl text-foreground">Wählen Sie eine Kategorie.</h3><div className="mt-8 grid gap-4 md:grid-cols-3">{bookingCategories.map((category) => <button key={category} type="button" onClick={() => { setBookingCategory(category); setBooking({ ...booking, service_id: "" }); setBookingStep(2); }} className={`border p-6 text-left transition-all hover:-translate-y-1 hover:border-primary ${bookingCategory === category ? "border-primary bg-secondary" : "border-border bg-background"}`}><Scissors className="mb-5 size-7 text-primary" /><span className="font-display text-3xl text-foreground">{categoryLabels[category] ?? category}</span><span className="mt-3 block text-sm text-muted-foreground">{services.filter((service) => service.category === category).length} Leistungen verfügbar</span></button>)}</div></div>}
+            {bookingStep === 2 && <div className="animate-fade-up"><p className="section-kicker">Step 2</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Ihre Leistung.</h3><div className="mt-8 grid gap-4">{filteredBookingServices.map((service) => <button key={service.id} type="button" onClick={() => { setBooking({ ...booking, service_id: service.id }); setBookingStep(3); }} className={`group flex flex-col justify-between gap-4 border p-5 text-left transition-all hover:border-primary md:flex-row md:items-center ${booking.service_id === service.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><span><span className="block font-display text-2xl text-foreground">{service.name}</span><span className="mt-1 block text-sm text-muted-foreground">{service.description}</span></span><span className="flex items-center gap-5 text-primary"><span>{service.duration_minutes} Min.</span><span className="font-display text-2xl">{formatPrice(service.price_cents)}</span></span></button>)}</div></div>}
             {bookingStep === 3 && <div className="animate-fade-up"><p className="section-kicker">Step 3</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Ihren Stylisten.</h3><div className="mt-8 grid gap-5 md:grid-cols-3">{stylists.map((stylist) => <button key={stylist.id} type="button" onClick={() => { setBooking({ ...booking, stylist_id: stylist.id }); setBookingStep(4); }} className={`overflow-hidden border text-left transition-all hover:-translate-y-1 hover:border-primary ${booking.stylist_id === stylist.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="aspect-[4/5] w-full object-cover" loading="lazy" /><span className="block p-4"><span className="block font-display text-2xl text-foreground">{stylist.name}</span><span className="mt-1 block text-sm text-primary">{stylist.specialty}</span></span></button>)}</div></div>}
-            {bookingStep === 4 && <div className="animate-fade-up"><p className="section-kicker">Step 4</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Datum und Uhrzeit.</h3><div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Popover><PopoverTrigger asChild><Button variant="glass" size="xl" className="justify-start text-left"><CalendarIcon />{selectedDate ? format(selectedDate, "PPP") : "Datum wählen"}</Button></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={selectedDate} onSelect={(date) => { setSelectedDate(date); setSelectedTime(""); }} disabled={(date) => date < today || date.getDay() === 0} initialFocus /></PopoverContent></Popover><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{timeSlots.map((slot) => { const isAvailable = availableTimeSlots.includes(slot); return <button key={slot} type="button" disabled={!selectedDate || !isAvailable} onClick={() => { setSelectedTime(slot); setBookingStep(5); }} className={`border px-4 py-3 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 ${selectedTime === slot ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary hover:text-primary"}`}>{slot}</button>; })}</div></div><p className="mt-5 text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Nicht verfügbare Zeiten werden anhand aktueller Buchungen ausgeblendet.</p></div>}
+            {bookingStep === 4 && <div className="animate-fade-up"><p className="section-kicker">Step 4</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Datum und Uhrzeit.</h3><div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Popover><PopoverTrigger asChild><Button variant="glass" size="xl" className="justify-start text-left"><CalendarIcon />{selectedDate ? format(selectedDate, "PPP") : "Datum wählen"}</Button></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={selectedDate} onSelect={(date) => { setSelectedDate(date); setSelectedTime(""); }} disabled={(date) => date < today || date.getDay() === 0 || date.getDay() === 1} initialFocus /></PopoverContent></Popover><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{timeSlots.map((slot) => { const isAvailable = availableTimeSlots.includes(slot); return <button key={slot} type="button" disabled={!selectedDate || !isAvailable} onClick={() => { setSelectedTime(slot); setBookingStep(5); }} className={`border px-4 py-3 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 ${selectedTime === slot ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary hover:text-primary"}`}>{slot}</button>; })}</div></div><p className="mt-5 text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Nicht verfügbare Zeiten werden anhand aktueller Buchungen ausgeblendet.</p></div>}
             {bookingStep === 5 && <div className="animate-fade-up"><p className="section-kicker">Step 5</p><h3 className="font-display text-4xl text-foreground">Ihre Kontaktdaten.</h3><div className="mt-8 grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={booking.customer_name} onChange={(event) => setBooking({ ...booking, customer_name: event.target.value })} /><Input placeholder="E-Mail" type="email" value={booking.customer_email} onChange={(event) => setBooking({ ...booking, customer_email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={booking.customer_phone} onChange={(event) => setBooking({ ...booking, customer_phone: event.target.value })} /></div><Textarea className="mt-4 min-h-28" placeholder="Notizen, Wünsche oder Besonderheiten" value={booking.notes} onChange={(event) => setBooking({ ...booking, notes: event.target.value })} /><Button className="mt-6" variant="hero" size="lg" type="button" onClick={() => setBookingStep(6)}>Buchung prüfen</Button></div>}
-            {bookingStep === 6 && <div className="animate-fade-up"><p className="section-kicker">Step 6</p><h3 className="font-display text-4xl text-foreground">Bestätigung your appointment.</h3><div className="mt-8 grid gap-4 border border-border bg-background p-5"><p><span className="text-muted-foreground">Leistung:</span> <span className="text-foreground">{selectedLeistung?.name} · {formatPrice(selectedLeistung?.price_cents ?? 0)}</span></p><p><span className="text-muted-foreground">Dauer:</span> <span className="text-foreground">{selectedLeistung?.duration_Minuten} Minuten</span></p><p><span className="text-muted-foreground">Stylist:</span> <span className="text-foreground">{selectedStylist?.name ?? "Nicht ausgewählt"}</span></p><p><span className="text-muted-foreground">Datum:</span> <span className="text-foreground">{formatBookingDateTime(booking.appointment_start)}</span></p><p><span className="text-muted-foreground">Gast:</span> <span className="text-foreground">{booking.customer_name || "Nicht angegeben"} · {booking.customer_email || "Keine E-Mail"}</span></p></div><div className="mt-6 flex flex-col gap-3 sm:flex-row"><Button variant="glass" type="button" onClick={() => setBookingStep(5)}>Details ändern</Button><Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Wird angefragt…" : "Bestätigung appointment"}</Button></div></div>}
+            {bookingStep === 6 && <div className="animate-fade-up"><p className="section-kicker">Step 6</p><h3 className="font-display text-4xl text-foreground">Bestätigen Sie Ihren Termin.</h3><div className="mt-8 grid gap-4 border border-border bg-background p-5"><p><span className="text-muted-foreground">Leistung:</span> <span className="text-foreground">{selectedService?.name} · {formatPrice(selectedService?.price_cents ?? 0)}</span></p><p><span className="text-muted-foreground">Dauer:</span> <span className="text-foreground">{selectedService?.duration_minutes} Minuten</span></p><p><span className="text-muted-foreground">Stylist:</span> <span className="text-foreground">{selectedStylist?.name ?? "Nicht ausgewählt"}</span></p><p><span className="text-muted-foreground">Datum:</span> <span className="text-foreground">{formatBookingDateTime(booking.appointment_start)}</span></p><p><span className="text-muted-foreground">Gast:</span> <span className="text-foreground">{booking.customer_name || "Nicht angegeben"} · {booking.customer_email || "Keine E-Mail"}</span></p></div><div className="mt-6 flex flex-col gap-3 sm:flex-row"><Button variant="glass" type="button" onClick={() => setBookingStep(5)}>Details ändern</Button><Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Wird angefragt…" : "Termin bestätigen"}</Button></div></div>}
           </form>
         </div>
       </section>
 
       <section id="services" className="reveal-on-scroll py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Leistungs & pricing</p><h2 className="section-title">Ausgewählte Leistungen mit österreichischen Preisen.</h2></div><p className="section-copy md:max-w-md">Jede Leistung beinhaltet Beratung, typgerechtes Finish und Pflegeempfehlung.</p></div>
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Leistungen & Preise</p><h2 className="section-title">Ausgewählte Leistungen mit österreichischen Preisen.</h2></div><p className="section-copy md:max-w-md">Jede Leistung beinhaltet Beratung, typgerechtes Finish und Pflegeempfehlung.</p></div>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {serviceGroups.map((group) => <article key={group.category} className="border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-card">
-              <h3 className="mb-5 font-display text-3xl text-primary">{group.category}</h3>
-              <div className="space-y-5">{group.items.map((service) => <div key={service.id} className="border-b border-border pb-4 last:border-b-0"><div className="flex justify-between gap-4"><p className="font-medium text-foreground">{service.name}</p><p className="text-primary">{formatPrice(service.price_cents)}</p></div><p className="mt-1 text-sm text-muted-foreground">{service.description}</p><p className="mt-2 text-xs uppercase tracking-[0.18em] text-accent-foreground">{service.duration_Minuten} Minuten</p></div>)}</div>
+              <h3 className="mb-5 font-display text-3xl text-primary">{categoryLabels[group.category] ?? group.category}</h3>
+              <div className="space-y-5">{group.items.map((service) => <div key={service.id} className="border-b border-border pb-4 last:border-b-0"><div className="flex justify-between gap-4"><p className="font-medium text-foreground">{service.name}</p><p className="text-primary">{formatPrice(service.price_cents)}</p></div><p className="mt-1 text-sm text-muted-foreground">{service.description}</p><p className="mt-2 text-xs uppercase tracking-[0.18em] text-accent-foreground">{service.duration_minutes} Minuten</p></div>)}</div>
             </article>)}
           </div>
         </div>
@@ -473,12 +473,12 @@ const Index = () => {
 
       <section id="contact" className="reveal-on-scroll py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div><p className="section-kicker">Kontakt & Standort</p><h2 className="section-title">Besuchen Sie unseren Salon.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />{salonAddress}</p><p><Telefon className="mr-3 inline size-5 text-primary" />{salonTelefon}</p><p><Mail className="mr-3 inline size-5 text-primary" />hallo@deinsalon.at</p></div>
+          <div><p className="section-kicker">Kontakt & Standort</p><h2 className="section-title">Besuchen Sie unseren Salon.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />{salonAddress}</p><p><Phone className="mr-3 inline size-5 text-primary" />{salonPhone}</p><p><Mail className="mr-3 inline size-5 text-primary" />hallo@deinsalon.at</p></div>
             <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title="{salonName} map" src="https://maps.google.com/maps?q=D%C3%BCsseldorf%20K%C3%B6nigsallee&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
           </div>
           <div className="grid gap-6">
-            <form onSubmit={submitContact} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} /><Input type="email" placeholder="E-Mail" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={contact.phone} onChange={(event) => setContact({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="Wie können wir helfen?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isContacting}>{isContacting ? "Wird gesendet…" : "Nachricht senden"}</Button></form>
-            <form onSubmit={submitNewsletter} className="border border-primary/30 bg-gold-gradient p-6 text-primary-foreground"><h3 className="font-display text-3xl">10% auf den ersten Besuch</h3><p className="mt-2 text-primary-foreground/80">Abonnieren Sie Neuigkeiten, Pflegetipps und Ihren Willkommensvorteil.</p><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Input type="email" placeholder="E-Mail address" value={newsletterE-Mail} onChange={(event) => setNewsletterE-Mail(event.target.value)} className="bg-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/60" /><Button variant="velvet" type="submit">Code sichern</Button></div></form>
+            <form onSubmit={submitKontakt} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setKontakt({ ...contact, name: event.target.value })} /><Input type="email" placeholder="E-Mail" value={contact.email} onChange={(event) => setKontakt({ ...contact, email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={contact.phone} onChange={(event) => setKontakt({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="Wie können wir helfen?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setKontakt({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isKontakting}>{isKontakting ? "Wird gesendet…" : "Nachricht senden"}</Button></form>
+            <form onSubmit={submitNewsletter} className="border border-primary/30 bg-gold-gradient p-6 text-primary-foreground"><h3 className="font-display text-3xl">10% auf den ersten Besuch</h3><p className="mt-2 text-primary-foreground/80">Abonnieren Sie Neuigkeiten, Pflegetipps und Ihren Willkommensvorteil.</p><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Input type="email" placeholder="E-Mail-Adresse" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} className="bg-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/60" /><Button variant="velvet" type="submit">Code sichern</Button></div></form>
           </div>
         </div>
       </section>
