@@ -68,41 +68,49 @@ type BookedSlot = {
 };
 
 const stylistImages: Record<string, string> = {
-  "Amara Vale": amaraImage,
-  "Leon Hart": leonImage,
-  "Sofia Marin": sofiaImage,
+  "Anna Berger": amaraImage,
+  "Lukas Steiner": leonImage,
+  "Mira Novak": sofiaImage,
 };
 
 const fallbackServices: Service[] = [
-  { id: "cut-men", name: "Signature Cut & Finish", category: "Men", description: "Precision scissor cut, hot towel, neckline shave", price_cents: 5200, duration_minutes: 45 },
-  { id: "beard", name: "Executive Beard Ritual", category: "Men", description: "Beard sculpting with oils and warm compress", price_cents: 3800, duration_minutes: 30 },
-  { id: "cut-women", name: "Couture Cut & Blowout", category: "Women", description: "Shape, movement and polished finish", price_cents: 7800, duration_minutes: 75 },
-  { id: "gloss", name: "Gloss Color Refresh", category: "Women", description: "Tonal gloss and shine treatment", price_cents: 9600, duration_minutes: 90 },
-  { id: "kids", name: "Junior Trim", category: "Kids", description: "Gentle trim for younger guests", price_cents: 3200, duration_minutes: 30 },
-  { id: "keratin", name: "Keratin Silk Treatment", category: "Treatments", description: "Smoothing ritual with mirror-like shine", price_cents: 18500, duration_minutes: 120 },
+  { id: "cut-men", name: "Herrenhaarschnitt", category: "Men", description: "Klassischer Schnitt mit Styling und Konturen", price_cents: 2500, duration_minutes: 30 },
+  { id: "beard", name: "Herrenhaarschnitt & Bart", category: "Men", description: "Haarschnitt, Bartform und Pflegefinish", price_cents: 3900, duration_minutes: 45 },
+  { id: "machine", name: "Maschinenschnitt", category: "Men", description: "Präziser Kurzhaarschnitt mit Maschine", price_cents: 1800, duration_minutes: 20 },
+  { id: "cut-women", name: "Damenhaarschnitt", category: "Women", description: "Beratung, Schnitt, Föhnen und Finish", price_cents: 4500, duration_minutes: 60 },
+  { id: "blowdry", name: "Waschen & Föhnen", category: "Women", description: "Schonende Pflegewäsche und professionelles Styling", price_cents: 3200, duration_minutes: 35 },
+  { id: "color", name: "Färben ab", category: "Women", description: "Ansatz oder Farbauffrischung inklusive Beratung", price_cents: 6500, duration_minutes: 90 },
+  { id: "balayage", name: "Balayage ab", category: "Women", description: "Natürliche Farbverläufe mit Gloss-Finish", price_cents: 12000, duration_minutes: 150 },
+  { id: "care", name: "Intensivpflege Treatment", category: "Treatments", description: "Aufbauende Pflegekur mit Kopfmassage", price_cents: 2900, duration_minutes: 30 },
+  { id: "keratin", name: "Keratin Glättung ab", category: "Treatments", description: "Glättendes Premium-Treatment für seidigen Glanz", price_cents: 14500, duration_minutes: 120 },
 ];
 
 const fallbackStylists: Stylist[] = [
-  { id: "amara", name: "Amara Vale", role: "Creative Director", specialty: "Precision cuts & editorial styling", bio: "Known for architectural shapes and soft, wearable luxury.", years_experience: 12 },
-  { id: "leon", name: "Leon Hart", role: "Master Barber", specialty: "Classic barbering & beard rituals", bio: "A detail-obsessed barber blending heritage technique with modern finish.", years_experience: 9 },
-  { id: "sofia", name: "Sofia Marin", role: "Color Specialist", specialty: "Balayage, gloss, dimensional color", bio: "Creates luminous color stories with a low-maintenance grow-out.", years_experience: 8 },
+  { id: "anna", name: "Anna Berger", role: "Master Stylistin", specialty: "Damenhaarschnitte, Balayage und Farbberatung", bio: "Ruhige Präzision, typgerechte Beratung und elegante Looks für jeden Tag.", years_experience: 11 },
+  { id: "lukas", name: "Lukas Steiner", role: "Barber & Herrenstylist", specialty: "Herrenhaarschnitte, Bartformen und Konturen", bio: "Klassisches Barber-Handwerk mit modernem Wiener Finish.", years_experience: 8 },
+  { id: "mira", name: "Mira Novak", role: "Color Specialist", specialty: "Färben, Glossing und Pflege-Treatments", bio: "Spezialistin für natürliche Farbverläufe, Glanz und gesunde Haarstruktur.", years_experience: 9 },
 ];
 
 const fallbackTestimonials: Testimonial[] = [
-  { customer_name: "Mira K.", rating: 5, quote: "The most refined salon experience I have had — calm, precise, and absolutely luxurious.", service_name: "Couture Cut" },
-  { customer_name: "Daniel R.", rating: 5, quote: "Leon turned a routine cut into a ritual. Impeccable detail and atmosphere.", service_name: "Signature Cut" },
-  { customer_name: "Elena S.", rating: 5, quote: "My color looks expensive, natural, and effortless. Already booked the next visit.", service_name: "Gloss Color" },
+  { customer_name: "Julia M.", rating: 5, quote: "Wunderschöner Salon, ehrliche Beratung und mein Schnitt sitzt perfekt.", service_name: "Damenhaarschnitt" },
+  { customer_name: "Markus H.", rating: 5, quote: "Sehr sauberer Herrenhaarschnitt und Bartservice — genau so muss es sein.", service_name: "Herrenhaarschnitt & Bart" },
+  { customer_name: "Elena K.", rating: 5, quote: "Die Farbe wirkt natürlich, hochwertig und glänzt unglaublich schön.", service_name: "Balayage" },
 ];
 
 const bookingCategories = ["Men", "Women", "Treatments"];
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 const navLinks = [
-  ["Services", "#services"],
-  ["Stylists", "#team"],
-  ["Gallery", "#gallery"],
-  ["Contact", "#contact"],
+  ["Leistungen", "#services"],
+  ["Team", "#team"],
+  ["Galerie", "#gallery"],
+  ["Kontakt", "#contact"],
 ];
-const instagramHandle = "maisonnoiratelier";
+const salonName = "[DEIN SALON NAME]";
+const salonAddress = "[DEINE ADRESSE]";
+const salonPhone = "[DEINE NUMMER]";
+const whatsappHref = "https://wa.me/43123456789?text=Hallo%20%5BDEIN%20SALON%20NAME%5D%2C%20ich%20m%C3%B6chte%20gerne%20einen%20Termin%20buchen.";
+const instagramHandle = "deinsalonname";
+const categoryLabels: Record<string, string> = { Men: "Herren", Women: "Damen", Treatments: "Treatments", Kids: "Kinder" };
 
 const bookingSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
@@ -123,17 +131,17 @@ const contactSchema = z.object({
 
 const newsletterSchema = z.object({ email: z.string().trim().email().max(255) });
 
-const formatPrice = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(cents / 100);
+const formatPrice = (cents: number) => new Intl.NumberFormat("de-AT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(cents / 100);
 
-const formatBookingDateTime = (value: string) => value ? format(new Date(value), "PPP 'at' HH:mm") : "Not selected";
+const formatBookingDateTime = (value: string) => value ? format(new Date(value), "dd.MM.yyyy 'um' HH:mm") : "Nicht ausgewählt";
 
 const isOpenNow = () => {
   const now = new Date();
   const day = now.getDay();
   const hour = now.getHours();
-  if (day === 0) return false;
-  if (day === 6) return hour >= 10 && hour < 16;
-  return hour >= 9 && hour < 20;
+  if (day === 0 || day === 1) return false;
+  if (day === 6) return hour >= 8 && hour < 17;
+  return hour >= 9 && hour < 19;
 };
 
 const Index = () => {
@@ -147,7 +155,8 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
-  const [showLoader, setShowLoader] = useState(() => !window.sessionStorage.getItem("maison-noir-loaded"));
+  const [language, setLanguage] = useState<"de" | "en">("de");
+  const [showLoader, setShowLoader] = useState(() => !window.sessionStorage.getItem("salon-loaded"));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: -120, y: -120 });
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
@@ -174,7 +183,7 @@ const Index = () => {
   useEffect(() => {
     if (!showLoader) return;
     const timer = window.setTimeout(() => {
-      window.sessionStorage.setItem("maison-noir-loaded", "true");
+      window.sessionStorage.setItem("salon-loaded", "true");
       setShowLoader(false);
     }, 1450);
     return () => window.clearTimeout(timer);
@@ -255,7 +264,7 @@ const Index = () => {
     event.preventDefault();
     const parsed = bookingSchema.safeParse(booking);
     if (!parsed.success) {
-      toast.error("Please complete the booking details.");
+      toast.error("Bitte vervollständigen Sie die Buchungsdetails.");
       return;
     }
     setIsBooking(true);
@@ -274,21 +283,21 @@ const Index = () => {
     });
     setIsBooking(false);
     if (error) {
-      toast.error("Booking could not be saved. Please try another time.");
+      toast.error("Die Buchung konnte nicht gespeichert werden. Bitte wählen Sie eine andere Zeit.");
       return;
     }
-    toast.success("Appointment requested. Email confirmation is ready to connect.");
+    toast.success("Termin angefragt — wir bestätigen ihn in Kürze.");
     setBooking({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
     setSelectedDate(undefined);
     setSelectedTime("");
     setBookingStep(1);
   };
 
-  const submitContact = async (event: React.FormEvent) => {
+  const submitKontakt = async (event: React.FormEvent) => {
     event.preventDefault();
     const parsed = contactSchema.safeParse(contact);
     if (!parsed.success) {
-      toast.error("Please enter valid contact details.");
+      toast.error("Bitte geben Sie gültige Kontaktdaten ein.");
       return;
     }
     setIsContacting(true);
@@ -300,10 +309,10 @@ const Index = () => {
     });
     setIsContacting(false);
     if (error) {
-      toast.error("Message could not be sent.");
+      toast.error("Nachricht konnte nicht gesendet werden.");
       return;
     }
-    toast.success("Message sent — we will reply shortly.");
+    toast.success("Nachricht gesendet — wir melden uns in Kürze.");
     setContact({ name: "", email: "", phone: "", message: "" });
   };
 
@@ -311,38 +320,38 @@ const Index = () => {
     event.preventDefault();
     const parsed = newsletterSchema.safeParse({ email: newsletterEmail });
     if (!parsed.success) {
-      toast.error("Enter a valid email for your 10% code.");
+      toast.error("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
       return;
     }
     const { error } = await supabase.from("newsletter_signups").insert({ email: parsed.data.email, consent: true });
     if (error) {
-      toast.info("You may already have a FIRST10 code waiting.");
+      toast.info("Ihr Willkommenscode wartet möglicherweise bereits.");
       return;
     }
-    toast.success("Welcome — your FIRST10 code is reserved.");
+    toast.success("Willkommen — Ihr Willkommenscode ist reserviert.");
     setNewsletterEmail("");
   };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {showLoader && <div className="fixed inset-0 z-[80] grid place-items-center bg-background"><div className="relative grid size-36 place-items-center border border-primary/35"><div className="absolute inset-3 animate-spin border border-primary/20 border-t-primary" /><Scissors className="size-10 text-primary" /><p className="absolute -bottom-10 font-display text-2xl tracking-[0.22em] text-primary">MN</p></div></div>}
+      {showLoader && <div className="fixed inset-0 z-[80] grid place-items-center bg-background"><div className="relative grid size-36 place-items-center border border-primary/35"><div className="absolute inset-3 animate-spin border border-primary/20 border-t-primary" /><Scissors className="size-10 text-primary" /><p className="absolute -bottom-10 font-display text-2xl tracking-[0.22em] text-primary">{salonName.split(" ").map((word) => word[0]).join("").replace(/[\[\]]/g, "").slice(0, 2) || "DS"}</p></div></div>}
       <div className="pointer-events-none fixed z-[70] hidden size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-2xl transition-transform duration-100 md:block" style={{ left: cursorPosition.x, top: cursorPosition.y }} />
-      <a href="https://wa.me/493012345678?text=Hello%20Maison%20Noir%2C%20I%20would%20like%20to%20book%20an%20appointment." target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center border border-primary bg-card text-primary shadow-elegant transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground"><MessageCircle className="size-6" /></a>
+      <a href={whatsappHref} target="_blank" rel="noreferrer" aria-label="Auf WhatsApp schreiben" className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center border border-primary bg-card text-primary shadow-elegant transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground"><MessageCircle className="size-6" /></a>
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <a href="#home" className="font-display text-xl uppercase tracking-[0.28em] text-primary">Maison Noir</a>
+          <a href="#home" className="font-display text-xl uppercase tracking-[0.28em] text-primary">{salonName}</a>
           <div className="hidden items-center gap-7 text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex">
             {navLinks.map(([label, href]) => <a key={href} className="transition-colors hover:text-primary" href={href}>{label}</a>)}
           </div>
-          <div className="hidden md:block"><Button variant="hero" size="sm" asChild><a href="#booking">Book Now</a></Button></div>
-          <button type="button" aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
+          <div className="hidden items-center gap-3 md:flex"><button type="button" onClick={() => setLanguage(language === "de" ? "en" : "de")} className="border border-primary/35 px-3 py-2 text-xs uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground">{language === "de" ? "DE" : "EN"}</button><Button variant="hero" size="sm" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button></div>
+          <button type="button" aria-label="Menü öffnen" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
         </div>
       </nav>
       <div className={`fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-opacity md:hidden ${mobileMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setMobileMenuOpen(false)} />
       <aside className={`fixed right-0 top-0 z-[61] h-full w-[min(84vw,22rem)] border-l border-primary/25 bg-card p-6 shadow-elegant transition-transform duration-500 ease-out md:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">Maison Noir</span><button type="button" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
+        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">{salonName}</span><button type="button" aria-label="Menü schließen" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
         <div className="mt-12 grid gap-5 text-lg text-muted-foreground">{navLinks.map(([label, href]) => <a key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="border-b border-border pb-4 font-display text-3xl text-foreground transition-colors hover:text-primary">{label}</a>)}</div>
-        <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#booking" onClick={() => setMobileMenuOpen(false)}>Book Now</a></Button>
+        <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#booking" onClick={() => setMobileMenuOpen(false)}>{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button>
       </aside>
 
       <section id="home" className="relative flex min-h-screen items-center overflow-hidden pt-24">
@@ -356,25 +365,25 @@ const Index = () => {
         }} />
         <div className="relative z-10 mx-auto grid max-w-7xl items-end gap-12 px-5 pb-16 pt-20 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
           <div className="animate-fade-up">
-            <p className="mb-5 inline-flex items-center gap-3 border border-primary/30 bg-card/45 px-4 py-2 text-xs uppercase tracking-[0.32em] text-primary backdrop-blur-md"><Crown className="size-4" /> Private salon atelier</p>
-            <h1 className="max-w-4xl font-display text-5xl leading-[0.95] text-foreground md:text-7xl lg:text-8xl">Precision grooming. Couture hair. Quiet luxury.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">A world-class barbershop and hair salon experience for guests who expect craft, discretion, and a flawless finish.</p>
+            <p className="mb-5 inline-flex items-center gap-3 border border-primary/30 bg-card/45 px-4 py-2 text-xs uppercase tracking-[0.32em] text-primary backdrop-blur-md"><Crown className="size-4" /> Privates Salon Atelier</p>
+            <h1 className="max-w-4xl font-display text-5xl leading-[0.95] text-foreground md:text-7xl lg:text-8xl">Haarkunst. Pflege. Zeitlose Eleganz.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Ein hochwertiger Friseur- und Barber-Salon in Österreich für Gäste, die präzises Handwerk, persönliche Beratung und ein perfektes Finish erwarten.</p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <Button variant="hero" size="xl" asChild><a href="#booking">Book Now <CalendarDays /></a></Button>
-              <Button variant="glass" size="xl" asChild><a href="tel:+493012345678"><Phone /> Click to call</a></Button>
+              <Button variant="hero" size="xl" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"} <CalendarDays /></a></Button>
+              <Button variant="glass" size="xl" asChild><a href="tel:+43123456789"><Phone /> Anrufen</a></Button>
             </div>
           </div>
           <div className="grid gap-4 animate-fade-up [animation-delay:180ms]">
             <div className="border border-primary/20 bg-card/65 p-5 shadow-card backdrop-blur-xl">
               <div className="flex items-center justify-between gap-4">
                 <span className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Today</span>
-                <span className={`inline-flex items-center gap-2 text-sm ${openNow ? "text-success" : "text-destructive"}`}><span className="size-2 rounded-full bg-current" /> {openNow ? "Open now" : "Closed"}</span>
+                <span className={`inline-flex items-center gap-2 text-sm ${openNow ? "text-success" : "text-destructive"}`}><span className="size-2 rounded-full bg-current" /> {openNow ? "Jetzt geöffnet" : "Geschlossen"}</span>
               </div>
-              <p className="mt-4 font-display text-3xl text-foreground">Mon–Fri 09:00–20:00</p>
-              <p className="mt-2 text-sm text-muted-foreground">Saturday private appointments until 16:00</p>
+              <p className="mt-4 font-display text-3xl text-foreground">Di–Fr 09:00–19:00</p>
+              <p className="mt-2 text-sm text-muted-foreground">Sa 08:00–17:00 · Mo & So geschlossen</p>
             </div>
             <div className="grid grid-cols-3 border border-border/70 bg-background/75 text-center backdrop-blur-xl">
-              {["4.9★", "18k+", "12 yrs"].map((metric, index) => <div key={metric} className="border-r border-border/70 p-4 last:border-r-0"><p className="font-display text-2xl text-primary">{metric}</p><p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">{["Rating", "Guests", "Craft"][index]}</p></div>)}
+              {["4.9★", "18k+", "12 yrs"].map((metric, index) => <div key={metric} className="border-r border-border/70 p-4 last:border-r-0"><p className="font-display text-2xl text-primary">{metric}</p><p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">{["Bewertung", "Gäste", "Handwerk"][index]}</p></div>)}
             </div>
           </div>
         </div>
@@ -383,31 +392,31 @@ const Index = () => {
       <section id="booking" className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
           <div>
-            <p className="section-kicker">Online booking</p>
-            <h2 className="section-title">Reserve your chair in six seamless steps.</h2>
-            <p className="section-copy">A guided booking concierge with live stylist availability, secure appointment storage, and a final review before confirmation.</p>
+            <p className="section-kicker">Online Buchung</p>
+            <h2 className="section-title">Reservieren Sie Ihren Termin in sechs eleganten Schritten.</h2>
+            <p className="section-copy">Eine geführte Terminbuchung mit Live-Verfügbarkeit, sicherer Speicherung und finaler Übersicht vor der Bestätigung.</p>
             <div className="mt-8 grid gap-3">
-              {["Category", "Service", "Stylist", "Date & time", "Details", "Confirm"].map((label, index) => <button key={label} type="button" onClick={() => setBookingStep(index + 1)} className={`flex items-center gap-4 border p-4 text-left transition-all ${bookingStep === index + 1 ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/50"}`}><span className="flex size-8 items-center justify-center border border-primary/40 font-display text-primary">{index + 1}</span><span className="text-sm uppercase tracking-[0.2em] text-muted-foreground">{label}</span></button>)}
+              {["Kategorie", "Leistung", "Stylist", "Datum & Zeit", "Details", "Bestätigung"].map((label, index) => <button key={label} type="button" onClick={() => setBookingStep(index + 1)} className={`flex items-center gap-4 border p-4 text-left transition-all ${bookingStep === index + 1 ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/50"}`}><span className="flex size-8 items-center justify-center border border-primary/40 font-display text-primary">{index + 1}</span><span className="text-sm uppercase tracking-[0.2em] text-muted-foreground">{label}</span></button>)}
             </div>
           </div>
           <form onSubmit={submitBooking} className="border border-primary/20 bg-card p-5 shadow-elegant md:p-8">
-            {bookingStep === 1 && <div className="animate-fade-up"><p className="section-kicker">Step 1</p><h3 className="font-display text-4xl text-foreground">Choose a service category.</h3><div className="mt-8 grid gap-4 md:grid-cols-3">{bookingCategories.map((category) => <button key={category} type="button" onClick={() => { setBookingCategory(category); setBooking({ ...booking, service_id: "" }); setBookingStep(2); }} className={`border p-6 text-left transition-all hover:-translate-y-1 hover:border-primary ${bookingCategory === category ? "border-primary bg-secondary" : "border-border bg-background"}`}><Scissors className="mb-5 size-7 text-primary" /><span className="font-display text-3xl text-foreground">{category}</span><span className="mt-3 block text-sm text-muted-foreground">{services.filter((service) => service.category === category).length} rituals available</span></button>)}</div></div>}
-            {bookingStep === 2 && <div className="animate-fade-up"><p className="section-kicker">Step 2</p><h3 className="font-display text-4xl text-foreground">Select your {bookingCategory.toLowerCase()} service.</h3><div className="mt-8 grid gap-4">{filteredBookingServices.map((service) => <button key={service.id} type="button" onClick={() => { setBooking({ ...booking, service_id: service.id }); setBookingStep(3); }} className={`group flex flex-col justify-between gap-4 border p-5 text-left transition-all hover:border-primary md:flex-row md:items-center ${booking.service_id === service.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><span><span className="block font-display text-2xl text-foreground">{service.name}</span><span className="mt-1 block text-sm text-muted-foreground">{service.description}</span></span><span className="flex items-center gap-5 text-primary"><span>{service.duration_minutes} min</span><span className="font-display text-2xl">{formatPrice(service.price_cents)}</span></span></button>)}</div></div>}
-            {bookingStep === 3 && <div className="animate-fade-up"><p className="section-kicker">Step 3</p><h3 className="font-display text-4xl text-foreground">Pick your stylist.</h3><div className="mt-8 grid gap-5 md:grid-cols-3">{stylists.map((stylist) => <button key={stylist.id} type="button" onClick={() => { setBooking({ ...booking, stylist_id: stylist.id }); setBookingStep(4); }} className={`overflow-hidden border text-left transition-all hover:-translate-y-1 hover:border-primary ${booking.stylist_id === stylist.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="aspect-[4/5] w-full object-cover" loading="lazy" /><span className="block p-4"><span className="block font-display text-2xl text-foreground">{stylist.name}</span><span className="mt-1 block text-sm text-primary">{stylist.specialty}</span></span></button>)}</div></div>}
-            {bookingStep === 4 && <div className="animate-fade-up"><p className="section-kicker">Step 4</p><h3 className="font-display text-4xl text-foreground">Choose date and time.</h3><div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Popover><PopoverTrigger asChild><Button variant="glass" size="xl" className="justify-start text-left"><CalendarIcon />{selectedDate ? format(selectedDate, "PPP") : "Pick a date"}</Button></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={selectedDate} onSelect={(date) => { setSelectedDate(date); setSelectedTime(""); }} disabled={(date) => date < today || date.getDay() === 0} initialFocus /></PopoverContent></Popover><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{timeSlots.map((slot) => { const isAvailable = availableTimeSlots.includes(slot); return <button key={slot} type="button" disabled={!selectedDate || !isAvailable} onClick={() => { setSelectedTime(slot); setBookingStep(5); }} className={`border px-4 py-3 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 ${selectedTime === slot ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary hover:text-primary"}`}>{slot}</button>; })}</div></div><p className="mt-5 text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Unavailable slots are hidden using live appointment data.</p></div>}
-            {bookingStep === 5 && <div className="animate-fade-up"><p className="section-kicker">Step 5</p><h3 className="font-display text-4xl text-foreground">Enter your details.</h3><div className="mt-8 grid gap-4 md:grid-cols-2"><Input placeholder="Full name" value={booking.customer_name} onChange={(event) => setBooking({ ...booking, customer_name: event.target.value })} /><Input placeholder="Email" type="email" value={booking.customer_email} onChange={(event) => setBooking({ ...booking, customer_email: event.target.value })} /><Input placeholder="Phone" className="md:col-span-2" value={booking.customer_phone} onChange={(event) => setBooking({ ...booking, customer_phone: event.target.value })} /></div><Textarea className="mt-4 min-h-28" placeholder="Notes, allergies, preferred finish" value={booking.notes} onChange={(event) => setBooking({ ...booking, notes: event.target.value })} /><Button className="mt-6" variant="hero" size="lg" type="button" onClick={() => setBookingStep(6)}>Review booking</Button></div>}
-            {bookingStep === 6 && <div className="animate-fade-up"><p className="section-kicker">Step 6</p><h3 className="font-display text-4xl text-foreground">Confirm your appointment.</h3><div className="mt-8 grid gap-4 border border-border bg-background p-5"><p><span className="text-muted-foreground">Service:</span> <span className="text-foreground">{selectedService?.name} · {formatPrice(selectedService?.price_cents ?? 0)}</span></p><p><span className="text-muted-foreground">Duration:</span> <span className="text-foreground">{selectedService?.duration_minutes} minutes</span></p><p><span className="text-muted-foreground">Stylist:</span> <span className="text-foreground">{selectedStylist?.name ?? "Not selected"}</span></p><p><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{formatBookingDateTime(booking.appointment_start)}</span></p><p><span className="text-muted-foreground">Guest:</span> <span className="text-foreground">{booking.customer_name || "Not entered"} · {booking.customer_email || "No email"}</span></p></div><div className="mt-6 flex flex-col gap-3 sm:flex-row"><Button variant="glass" type="button" onClick={() => setBookingStep(5)}>Edit details</Button><Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Requesting…" : "Confirm appointment"}</Button></div></div>}
+            {bookingStep === 1 && <div className="animate-fade-up"><p className="section-kicker">Step 1</p><h3 className="font-display text-4xl text-foreground">Wählen Sie eine Kategorie.</h3><div className="mt-8 grid gap-4 md:grid-cols-3">{bookingCategories.map((category) => <button key={category} type="button" onClick={() => { setBookingCategory(category); setBooking({ ...booking, service_id: "" }); setBookingStep(2); }} className={`border p-6 text-left transition-all hover:-translate-y-1 hover:border-primary ${bookingCategory === category ? "border-primary bg-secondary" : "border-border bg-background"}`}><Scissors className="mb-5 size-7 text-primary" /><span className="font-display text-3xl text-foreground">{categoryLabels[category] ?? category}</span><span className="mt-3 block text-sm text-muted-foreground">{services.filter((service) => service.category === category).length} Leistungen verfügbar</span></button>)}</div></div>}
+            {bookingStep === 2 && <div className="animate-fade-up"><p className="section-kicker">Step 2</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Ihre Leistung.</h3><div className="mt-8 grid gap-4">{filteredBookingServices.map((service) => <button key={service.id} type="button" onClick={() => { setBooking({ ...booking, service_id: service.id }); setBookingStep(3); }} className={`group flex flex-col justify-between gap-4 border p-5 text-left transition-all hover:border-primary md:flex-row md:items-center ${booking.service_id === service.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><span><span className="block font-display text-2xl text-foreground">{service.name}</span><span className="mt-1 block text-sm text-muted-foreground">{service.description}</span></span><span className="flex items-center gap-5 text-primary"><span>{service.duration_minutes} Min.</span><span className="font-display text-2xl">{formatPrice(service.price_cents)}</span></span></button>)}</div></div>}
+            {bookingStep === 3 && <div className="animate-fade-up"><p className="section-kicker">Step 3</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Ihren Stylisten.</h3><div className="mt-8 grid gap-5 md:grid-cols-3">{stylists.map((stylist) => <button key={stylist.id} type="button" onClick={() => { setBooking({ ...booking, stylist_id: stylist.id }); setBookingStep(4); }} className={`overflow-hidden border text-left transition-all hover:-translate-y-1 hover:border-primary ${booking.stylist_id === stylist.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="aspect-[4/5] w-full object-cover" loading="lazy" /><span className="block p-4"><span className="block font-display text-2xl text-foreground">{stylist.name}</span><span className="mt-1 block text-sm text-primary">{stylist.specialty}</span></span></button>)}</div></div>}
+            {bookingStep === 4 && <div className="animate-fade-up"><p className="section-kicker">Step 4</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Datum und Uhrzeit.</h3><div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Popover><PopoverTrigger asChild><Button variant="glass" size="xl" className="justify-start text-left"><CalendarIcon />{selectedDate ? format(selectedDate, "PPP") : "Datum wählen"}</Button></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={selectedDate} onSelect={(date) => { setSelectedDate(date); setSelectedTime(""); }} disabled={(date) => date < today || date.getDay() === 0 || date.getDay() === 1} initialFocus /></PopoverContent></Popover><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{timeSlots.map((slot) => { const isAvailable = availableTimeSlots.includes(slot); return <button key={slot} type="button" disabled={!selectedDate || !isAvailable} onClick={() => { setSelectedTime(slot); setBookingStep(5); }} className={`border px-4 py-3 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 ${selectedTime === slot ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary hover:text-primary"}`}>{slot}</button>; })}</div></div><p className="mt-5 text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Nicht verfügbare Zeiten werden anhand aktueller Buchungen ausgeblendet.</p></div>}
+            {bookingStep === 5 && <div className="animate-fade-up"><p className="section-kicker">Step 5</p><h3 className="font-display text-4xl text-foreground">Ihre Kontaktdaten.</h3><div className="mt-8 grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={booking.customer_name} onChange={(event) => setBooking({ ...booking, customer_name: event.target.value })} /><Input placeholder="E-Mail" type="email" value={booking.customer_email} onChange={(event) => setBooking({ ...booking, customer_email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={booking.customer_phone} onChange={(event) => setBooking({ ...booking, customer_phone: event.target.value })} /></div><Textarea className="mt-4 min-h-28" placeholder="Notizen, Wünsche oder Besonderheiten" value={booking.notes} onChange={(event) => setBooking({ ...booking, notes: event.target.value })} /><Button className="mt-6" variant="hero" size="lg" type="button" onClick={() => setBookingStep(6)}>Buchung prüfen</Button></div>}
+            {bookingStep === 6 && <div className="animate-fade-up"><p className="section-kicker">Step 6</p><h3 className="font-display text-4xl text-foreground">Bestätigen Sie Ihren Termin.</h3><div className="mt-8 grid gap-4 border border-border bg-background p-5"><p><span className="text-muted-foreground">Leistung:</span> <span className="text-foreground">{selectedService?.name} · {formatPrice(selectedService?.price_cents ?? 0)}</span></p><p><span className="text-muted-foreground">Dauer:</span> <span className="text-foreground">{selectedService?.duration_minutes} Minuten</span></p><p><span className="text-muted-foreground">Stylist:</span> <span className="text-foreground">{selectedStylist?.name ?? "Nicht ausgewählt"}</span></p><p><span className="text-muted-foreground">Datum:</span> <span className="text-foreground">{formatBookingDateTime(booking.appointment_start)}</span></p><p><span className="text-muted-foreground">Gast:</span> <span className="text-foreground">{booking.customer_name || "Nicht angegeben"} · {booking.customer_email || "Keine E-Mail"}</span></p></div><div className="mt-6 flex flex-col gap-3 sm:flex-row"><Button variant="glass" type="button" onClick={() => setBookingStep(5)}>Details ändern</Button><Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Wird angefragt…" : "Termin bestätigen"}</Button></div></div>}
           </form>
         </div>
       </section>
 
       <section id="services" className="reveal-on-scroll py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Services & pricing</p><h2 className="section-title">A curated menu of rituals.</h2></div><p className="section-copy md:max-w-md">Every service includes consultation, tailored product finish, and aftercare guidance.</p></div>
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Leistungen & Preise</p><h2 className="section-title">Ausgewählte Leistungen mit österreichischen Preisen.</h2></div><p className="section-copy md:max-w-md">Jede Leistung beinhaltet Beratung, typgerechtes Finish und Pflegeempfehlung.</p></div>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {serviceGroups.map((group) => <article key={group.category} className="border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-card">
-              <h3 className="mb-5 font-display text-3xl text-primary">{group.category}</h3>
-              <div className="space-y-5">{group.items.map((service) => <div key={service.id} className="border-b border-border pb-4 last:border-b-0"><div className="flex justify-between gap-4"><p className="font-medium text-foreground">{service.name}</p><p className="text-primary">{formatPrice(service.price_cents)}</p></div><p className="mt-1 text-sm text-muted-foreground">{service.description}</p><p className="mt-2 text-xs uppercase tracking-[0.18em] text-accent-foreground">{service.duration_minutes} minutes</p></div>)}</div>
+              <h3 className="mb-5 font-display text-3xl text-primary">{categoryLabels[group.category] ?? group.category}</h3>
+              <div className="space-y-5">{group.items.map((service) => <div key={service.id} className="border-b border-border pb-4 last:border-b-0"><div className="flex justify-between gap-4"><p className="font-medium text-foreground">{service.name}</p><p className="text-primary">{formatPrice(service.price_cents)}</p></div><p className="mt-1 text-sm text-muted-foreground">{service.description}</p><p className="mt-2 text-xs uppercase tracking-[0.18em] text-accent-foreground">{service.duration_minutes} Minuten</p></div>)}</div>
             </article>)}
           </div>
         </div>
@@ -415,11 +424,11 @@ const Index = () => {
 
       <section id="team" className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <p className="section-kicker">Team</p><h2 className="section-title mb-12">Artists with a signature hand.</h2>
+          <p className="section-kicker">Team</p><h2 className="section-title mb-12">Stylisten mit Handschrift.</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {stylists.map((stylist) => <article key={stylist.id} className="group overflow-hidden border border-border bg-card shadow-card">
               <div className="aspect-[3/4] overflow-hidden"><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" width={768} height={1024} /></div>
-              <div className="p-6"><p className="text-xs uppercase tracking-[0.25em] text-primary">{stylist.role}</p><h3 className="mt-2 font-display text-3xl text-foreground">{stylist.name}</h3><p className="mt-2 text-sm text-muted-foreground">{stylist.specialty}</p><p className="mt-4 text-sm leading-6 text-muted-foreground">{stylist.bio}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm text-accent-foreground">{stylist.years_experience}+ years</span><Button variant="glass" size="sm" asChild><a href="#booking" onClick={() => setBooking((current) => ({ ...current, stylist_id: stylist.id }))}>Book</a></Button></div></div>
+              <div className="p-6"><p className="text-xs uppercase tracking-[0.25em] text-primary">{stylist.role}</p><h3 className="mt-2 font-display text-3xl text-foreground">{stylist.name}</h3><p className="mt-2 text-sm text-muted-foreground">{stylist.specialty}</p><p className="mt-4 text-sm leading-6 text-muted-foreground">{stylist.bio}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm text-accent-foreground">{stylist.years_experience}+ Jahre</span><Button variant="glass" size="sm" asChild><a href="#booking" onClick={() => setBooking((current) => ({ ...current, stylist_id: stylist.id }))}>Buchen</a></Button></div></div>
             </article>)}
           </div>
         </div>
@@ -427,7 +436,7 @@ const Index = () => {
 
       <section id="gallery" className="reveal-on-scroll py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 grid gap-6 md:grid-cols-2 md:items-end"><div><p className="section-kicker">Gallery</p><h2 className="section-title">Transformations in chiaroscuro.</h2></div><p className="section-copy">Masonry-inspired editorial work, with a tactile before/after reveal for transformation storytelling.</p></div>
+          <div className="mb-12 grid gap-6 md:grid-cols-2 md:items-end"><div><p className="section-kicker">Galerie</p><h2 className="section-title">Looks, Farbe und Finish.</h2></div><p className="section-copy">Ausgewählte Arbeiten aus dem Salon — von präzisen Schnitten bis zu glänzenden Farbveredelungen.</p></div>
           <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
             <div className="grid gap-5"><img src={galleryMen} alt="Textured men's haircut" className="gallery-image aspect-square" loading="lazy" width={900} height={900} /><img src={galleryTreatment} alt="Glossy salon styling result" className="gallery-image aspect-[1.35/1]" loading="lazy" width={900} height={760} /></div>
             <div className="grid gap-5"><img src={galleryColor} alt="Champagne balayage color transformation" className="gallery-image aspect-[1.1/1]" loading="lazy" width={900} height={1100} />
@@ -444,9 +453,9 @@ const Index = () => {
 
       <section className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Instagram</p><h2 className="section-title">Follow our work @{instagramHandle}</h2></div><Button variant="glass" asChild><a href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer"><Instagram /> Follow</a></Button></div>
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Instagram</p><h2 className="section-title">Folgen Sie unserer Arbeit @{instagramHandle}</h2></div><Button variant="glass" asChild><a href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer"><Instagram /> Follow</a></Button></div>
           <div className="grid gap-4 sm:grid-cols-3">
-            {[galleryMen, galleryColor, galleryTreatment].map((image, index) => <a key={image} href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer" className="group relative block overflow-hidden border border-border bg-card"><img src={image} alt={["Editorial barber cut from Maison Noir Instagram", "Balayage color work from Maison Noir Instagram", "Gloss treatment result from Maison Noir Instagram"][index]} className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" /><div className="absolute inset-0 grid place-items-center bg-background/0 text-primary opacity-0 transition-all group-hover:bg-background/55 group-hover:opacity-100"><Instagram className="size-8" /></div></a>)}
+            {[galleryMen, galleryColor, galleryTreatment].map((image, index) => <a key={image} href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer" className="group relative block overflow-hidden border border-border bg-card"><img src={image} alt={["Editorial barber cut from {salonName} Instagram", "Balayage color work from {salonName} Instagram", "Gloss treatment result from {salonName} Instagram"][index]} className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" /><div className="absolute inset-0 grid place-items-center bg-background/0 text-primary opacity-0 transition-all group-hover:bg-background/55 group-hover:opacity-100"><Instagram className="size-8" /></div></a>)}
           </div>
         </div>
       </section>
@@ -459,33 +468,33 @@ const Index = () => {
             <div className="mt-8 flex items-center justify-between"><div><p className="text-lg text-primary">{testimonials[activeTestimonial]?.customer_name}</p><p className="text-sm text-muted-foreground">{testimonials[activeTestimonial]?.service_name}</p></div><div className="flex gap-2"><Button variant="glass" size="icon" onClick={() => setActiveTestimonial((activeTestimonial - 1 + testimonials.length) % testimonials.length)}><ChevronLeft /></Button><Button variant="glass" size="icon" onClick={() => setActiveTestimonial((activeTestimonial + 1) % testimonials.length)}><ChevronRight /></Button></div></div>
           </div>
           <div className="grid gap-5">
-            <div className="border border-primary/30 bg-card p-7"><Gift className="mb-4 size-8 text-primary" /><h3 className="font-display text-3xl">Gift cards</h3><p className="mt-3 text-muted-foreground">Luxury vouchers for birthdays, weddings, and private grooming rituals.</p></div>
-            <div className="border border-border bg-card p-7"><Sparkles className="mb-4 size-8 text-primary" /><h3 className="font-display text-3xl">Loyalty atelier</h3><p className="mt-3 text-muted-foreground">Points tracker coming soon. Early members receive priority booking windows.</p></div>
+            <div className="border border-primary/30 bg-card p-7"><Gift className="mb-4 size-8 text-primary" /><h3 className="font-display text-3xl">Gutscheine</h3><p className="mt-3 text-muted-foreground">Hochwertige Gutscheine für Geburtstage, Hochzeiten und persönliche Verwöhnmomente.</p></div>
+            <div className="border border-border bg-card p-7"><Sparkles className="mb-4 size-8 text-primary" /><h3 className="font-display text-3xl">Stammkundenprogramm</h3><p className="mt-3 text-muted-foreground">Stammgäste erhalten bevorzugte Terminfenster und exklusive Pflegeangebote.</p></div>
           </div>
         </div>
       </section>
 
       <section id="contact" className="reveal-on-scroll py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div><p className="section-kicker">Contact & location</p><h2 className="section-title">Visit the atelier.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />Königsallee 18, Düsseldorf</p><p><Phone className="mr-3 inline size-5 text-primary" />+49 30 1234 5678</p><p><Mail className="mr-3 inline size-5 text-primary" />concierge@maisonnoir.example</p></div>
-            <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title="Maison Noir map" src="https://maps.google.com/maps?q=D%C3%BCsseldorf%20K%C3%B6nigsallee&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
+          <div><p className="section-kicker">Kontakt & Standort</p><h2 className="section-title">Besuchen Sie unseren Salon.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />{salonAddress}</p><p><Phone className="mr-3 inline size-5 text-primary" />{salonPhone}</p><p><Mail className="mr-3 inline size-5 text-primary" />hallo@deinsalon.at</p></div>
+            <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title={`${salonName} Karte`} src="https://maps.google.com/maps?q=Wien%20Austria&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
           </div>
           <div className="grid gap-6">
-            <form onSubmit={submitContact} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} /><Input type="email" placeholder="Email" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} /><Input placeholder="Phone" className="md:col-span-2" value={contact.phone} onChange={(event) => setContact({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="How can we help?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isContacting}>{isContacting ? "Sending…" : "Send message"}</Button></form>
-            <form onSubmit={submitNewsletter} className="border border-primary/30 bg-gold-gradient p-6 text-primary-foreground"><h3 className="font-display text-3xl">10% off your first visit</h3><p className="mt-2 text-primary-foreground/80">Join the newsletter for openings, care notes, and your FIRST10 incentive.</p><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Input type="email" placeholder="Email address" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} className="bg-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/60" /><Button variant="velvet" type="submit">Claim code</Button></div></form>
+            <form onSubmit={submitKontakt} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} /><Input type="email" placeholder="E-Mail" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={contact.phone} onChange={(event) => setContact({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="Wie können wir helfen?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isContacting}>{isContacting ? "Wird gesendet…" : "Nachricht senden"}</Button></form>
+            <form onSubmit={submitNewsletter} className="border border-primary/30 bg-gold-gradient p-6 text-primary-foreground"><h3 className="font-display text-3xl">10% auf den ersten Besuch</h3><p className="mt-2 text-primary-foreground/80">Abonnieren Sie Neuigkeiten, Pflegetipps und Ihren Willkommensvorteil.</p><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Input type="email" placeholder="E-Mail-Adresse" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} className="bg-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/60" /><Button variant="velvet" type="submit">Code sichern</Button></div></form>
           </div>
         </div>
       </section>
 
       <section className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8"><p className="section-kicker">Internal admin</p><h2 className="section-title mb-10">Operational command room.</h2><div className="grid gap-5 md:grid-cols-3">{[
-          [CalendarDays, "Upcoming appointments", "24", "Confirm, reschedule, cancel"],
-          [Users, "Customer list", "1,842", "Profiles and loyalty points"],
-          [TrendingUp, "Revenue overview", "€8.7k", "Daily and weekly pulse"],
+        <div className="mx-auto max-w-7xl px-5 lg:px-8"><p className="section-kicker">Interner Admin</p><h2 className="section-title mb-10">Operative Salonübersicht.</h2><div className="grid gap-5 md:grid-cols-3">{[
+          [CalendarDays, "Kommende Termine", "24", "Bestätigung, reschedule, cancel"],
+          [Users, "Kundenliste", "1,842", "Profile und Bonuspunkte"],
+          [TrendingUp, "Umsatzübersicht", "€8.7k", "Tages- und Wochenüberblick"],
         ].map(([Icon, title, value, label]) => <div key={String(title)} className="border border-border bg-card p-7 shadow-card"><Icon className="mb-6 size-8 text-primary" /><p className="text-sm uppercase tracking-[0.22em] text-muted-foreground">{String(title)}</p><p className="mt-2 font-display text-5xl text-foreground">{String(value)}</p><p className="mt-2 text-sm text-muted-foreground">{String(label)}</p></div>)}</div></div>
       </section>
 
-      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground"><Scissors className="mx-auto mb-4 size-6 text-primary" />Maison Noir — premium barbershop & hair salon management experience.</footer>
+      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground"><Scissors className="mx-auto mb-4 size-6 text-primary" />{salonName} — Premium Friseur- und Barber-Erlebnis in Österreich.</footer>
     </main>
   );
 };
