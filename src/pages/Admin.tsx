@@ -98,7 +98,7 @@ const Admin = () => {
       toast.error("Enter a valid admin email and password.");
       return;
     }
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    const { error } = await supabase.auth.signInWithPassword({ email: parsed.data.email ?? "", password: parsed.data.password ?? "" });
     if (error) toast.error(error.message);
   };
 
