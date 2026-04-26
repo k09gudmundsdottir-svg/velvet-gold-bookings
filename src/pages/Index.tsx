@@ -147,6 +147,9 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
+  const [showLoader, setShowLoader] = useState(() => !window.sessionStorage.getItem("maison-noir-loaded"));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: -120, y: -120 });
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
   const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -166,6 +169,21 @@ const Index = () => {
       if (testimonialData?.length) setTestimonials(testimonialData);
     };
     loadSalonData();
+  }, []);
+
+  useEffect(() => {
+    if (!showLoader) return;
+    const timer = window.setTimeout(() => {
+      window.sessionStorage.setItem("maison-noir-loaded", "true");
+      setShowLoader(false);
+    }, 1450);
+    return () => window.clearTimeout(timer);
+  }, [showLoader]);
+
+  useEffect(() => {
+    const updateCursor = (event: PointerEvent) => setCursorPosition({ x: event.clientX, y: event.clientY });
+    window.addEventListener("pointermove", updateCursor);
+    return () => window.removeEventListener("pointermove", updateCursor);
   }, []);
 
   useEffect(() => {
