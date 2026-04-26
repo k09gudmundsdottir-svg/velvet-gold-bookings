@@ -73,25 +73,28 @@ const stylistImages: Record<string, string> = {
   "Mira Novak": sofiaImage,
 };
 
-const fallbackServices: Leistung[] = [
-  { id: "cut-men", name: "Signature Cut & Finish", category: "Men", description: "Precision scissor cut, hot towel, neckline shave", price_cents: 5200, duration_minutes: 45 },
-  { id: "beard", name: "Executive Beard Ritual", category: "Men", description: "Beard sculpting with oils and warm compress", price_cents: 3800, duration_minutes: 30 },
-  { id: "cut-women", name: "Couture Cut & Blowout", category: "Women", description: "Shape, movement and polished finish", price_cents: 7800, duration_minutes: 75 },
-  { id: "gloss", name: "Gloss Color Refresh", category: "Women", description: "Tonal gloss and shine treatment", price_cents: 9600, duration_minutes: 90 },
-  { id: "kids", name: "Junior Trim", category: "Kids", description: "Gentle trim for younger guests", price_cents: 3200, duration_minutes: 30 },
-  { id: "keratin", name: "Keratin Silk Treatment", category: "Treatments", description: "Smoothing ritual with mirror-like shine", price_cents: 18500, duration_minutes: 120 },
+const fallbackServices: Service[] = [
+  { id: "cut-men", name: "Herrenhaarschnitt", category: "Men", description: "Klassischer Schnitt mit Styling und Konturen", price_cents: 2500, duration_minutes: 30 },
+  { id: "beard", name: "Herrenhaarschnitt & Bart", category: "Men", description: "Haarschnitt, Bartform und Pflegefinish", price_cents: 3900, duration_minutes: 45 },
+  { id: "machine", name: "Maschinenschnitt", category: "Men", description: "Präziser Kurzhaarschnitt mit Maschine", price_cents: 1800, duration_minutes: 20 },
+  { id: "cut-women", name: "Damenhaarschnitt", category: "Women", description: "Beratung, Schnitt, Föhnen und Finish", price_cents: 4500, duration_minutes: 60 },
+  { id: "blowdry", name: "Waschen & Föhnen", category: "Women", description: "Schonende Pflegewäsche und professionelles Styling", price_cents: 3200, duration_minutes: 35 },
+  { id: "color", name: "Färben ab", category: "Women", description: "Ansatz oder Farbauffrischung inklusive Beratung", price_cents: 6500, duration_minutes: 90 },
+  { id: "balayage", name: "Balayage ab", category: "Women", description: "Natürliche Farbverläufe mit Gloss-Finish", price_cents: 12000, duration_minutes: 150 },
+  { id: "care", name: "Intensivpflege Treatment", category: "Treatments", description: "Aufbauende Pflegekur mit Kopfmassage", price_cents: 2900, duration_minutes: 30 },
+  { id: "keratin", name: "Keratin Glättung ab", category: "Treatments", description: "Glättendes Premium-Treatment für seidigen Glanz", price_cents: 14500, duration_minutes: 120 },
 ];
 
-const fallbackTeam: Stylist[] = [
-  { id: "amara", name: "Amara Vale", role: "Creative Director", specialty: "Precision cuts & editorial styling", bio: "Known for architectural shapes and soft, wearable luxury.", years_experience: 12 },
-  { id: "leon", name: "Leon Hart", role: "Master Barber", specialty: "Classic barbering & beard rituals", bio: "A detail-obsessed barber blending heritage technique with modern finish.", years_experience: 9 },
-  { id: "sofia", name: "Sofia Marin", role: "Color Specialist", specialty: "Balayage, gloss, dimensional color", bio: "Creates luminous color stories with a low-maintenance grow-out.", years_experience: 8 },
+const fallbackStylists: Stylist[] = [
+  { id: "anna", name: "Anna Berger", role: "Master Stylistin", specialty: "Damenhaarschnitte, Balayage und Farbberatung", bio: "Ruhige Präzision, typgerechte Beratung und elegante Looks für jeden Tag.", years_experience: 11 },
+  { id: "lukas", name: "Lukas Steiner", role: "Barber & Herrenstylist", specialty: "Herrenhaarschnitte, Bartformen und Konturen", bio: "Klassisches Barber-Handwerk mit modernem Wiener Finish.", years_experience: 8 },
+  { id: "mira", name: "Mira Novak", role: "Color Specialist", specialty: "Färben, Glossing und Pflege-Treatments", bio: "Spezialistin für natürliche Farbverläufe, Glanz und gesunde Haarstruktur.", years_experience: 9 },
 ];
 
 const fallbackTestimonials: Testimonial[] = [
-  { customer_name: "Mira K.", rating: 5, quote: "The most refined salon experience I have had — calm, precise, and absolutely luxurious.", service_name: "Couture Cut" },
-  { customer_name: "Daniel R.", rating: 5, quote: "Leon turned a routine cut into a ritual. Impeccable detail and atmosphere.", service_name: "Signature Cut" },
-  { customer_name: "Elena S.", rating: 5, quote: "My color looks expensive, natural, and effortless. Already booked the next visit.", service_name: "Gloss Color" },
+  { customer_name: "Julia M.", rating: 5, quote: "Wunderschöner Salon, ehrliche Beratung und mein Schnitt sitzt perfekt.", service_name: "Damenhaarschnitt" },
+  { customer_name: "Markus H.", rating: 5, quote: "Sehr sauberer Herrenhaarschnitt und Bartservice — genau so muss es sein.", service_name: "Herrenhaarschnitt & Bart" },
+  { customer_name: "Elena K.", rating: 5, quote: "Die Farbe wirkt natürlich, hochwertig und glänzt unglaublich schön.", service_name: "Balayage" },
 ];
 
 const bookingCategories = ["Men", "Women", "Treatments"];
@@ -143,7 +146,7 @@ const isOpenNow = () => {
 
 const Index = () => {
   const [services, setServices] = useState<Service[]>(fallbackServices);
-  const [stylists, setTeam] = useState<Stylist[]>(fallbackTeam);
+  const [stylists, setStylists] = useState<Stylist[]>(fallbackStylists);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [beforeAfter, setBeforeAfter] = useState(52);
@@ -157,10 +160,10 @@ const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: -120, y: -120 });
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
-  const [contact, setKontakt] = useState({ name: "", email: "", phone: "", message: "" });
+  const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isBooking, setIsBooking] = useState(false);
-  const [isKontakting, setIsKontakting] = useState(false);
+  const [isContacting, setIsContacting] = useState(false);
   const openNow = isOpenNow();
 
   useEffect(() => {
@@ -171,7 +174,7 @@ const Index = () => {
         supabase.from("testimonials").select("customer_name,rating,quote,service_name").eq("is_featured", true).order("created_at", { ascending: false }),
       ]);
       if (serviceData?.length) setServices(serviceData);
-      if (stylistData?.length) setTeam(stylistData);
+      if (stylistData?.length) setStylists(stylistData);
       if (testimonialData?.length) setTestimonials(testimonialData);
     };
     loadSalonData();
@@ -297,20 +300,20 @@ const Index = () => {
       toast.error("Bitte geben Sie gültige Kontaktdaten ein.");
       return;
     }
-    setIsKontakting(true);
+    setIsContacting(true);
     const { error } = await supabase.from("contact_messages").insert({
       name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone || null,
       message: parsed.data.message,
     });
-    setIsKontakting(false);
+    setIsContacting(false);
     if (error) {
       toast.error("Nachricht konnte nicht gesendet werden.");
       return;
     }
     toast.success("Nachricht gesendet — wir melden uns in Kürze.");
-    setKontakt({ name: "", email: "", phone: "", message: "" });
+    setContact({ name: "", email: "", phone: "", message: "" });
   };
 
   const submitNewsletter = async (event: React.FormEvent) => {
@@ -474,10 +477,10 @@ const Index = () => {
       <section id="contact" className="reveal-on-scroll py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div><p className="section-kicker">Kontakt & Standort</p><h2 className="section-title">Besuchen Sie unseren Salon.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />{salonAddress}</p><p><Phone className="mr-3 inline size-5 text-primary" />{salonPhone}</p><p><Mail className="mr-3 inline size-5 text-primary" />hallo@deinsalon.at</p></div>
-            <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title="{salonName} map" src="https://maps.google.com/maps?q=D%C3%BCsseldorf%20K%C3%B6nigsallee&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
+            <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title={`${salonName} Karte`} src="https://maps.google.com/maps?q=Wien%20Austria&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
           </div>
           <div className="grid gap-6">
-            <form onSubmit={submitKontakt} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setKontakt({ ...contact, name: event.target.value })} /><Input type="email" placeholder="E-Mail" value={contact.email} onChange={(event) => setKontakt({ ...contact, email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={contact.phone} onChange={(event) => setKontakt({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="Wie können wir helfen?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setKontakt({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isKontakting}>{isKontakting ? "Wird gesendet…" : "Nachricht senden"}</Button></form>
+            <form onSubmit={submitKontakt} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} /><Input type="email" placeholder="E-Mail" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={contact.phone} onChange={(event) => setContact({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="Wie können wir helfen?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isContacting}>{isContacting ? "Wird gesendet…" : "Nachricht senden"}</Button></form>
             <form onSubmit={submitNewsletter} className="border border-primary/30 bg-gold-gradient p-6 text-primary-foreground"><h3 className="font-display text-3xl">10% auf den ersten Besuch</h3><p className="mt-2 text-primary-foreground/80">Abonnieren Sie Neuigkeiten, Pflegetipps und Ihren Willkommensvorteil.</p><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Input type="email" placeholder="E-Mail-Adresse" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} className="bg-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/60" /><Button variant="velvet" type="submit">Code sichern</Button></div></form>
           </div>
         </div>
