@@ -181,6 +181,30 @@ const Index = () => {
     return () => observer.disconnect();
   }, [services.length, stylists.length, testimonials.length]);
 
+  useEffect(() => {
+    if (!selectedDate || !selectedTime) return;
+    const [hours, minutes] = selectedTime.split(":").map(Number);
+    const nextDate = new Date(selectedDate);
+    nextDate.setHours(hours, minutes, 0, 0);
+    setBooking((current) => ({ ...current, appointment_start: nextDate.toISOString().slice(0, 16) }));
+  }, [selectedDate, selectedTime]);
+
+  useEffect(() => {
+    const loadBookedSlots = async () => {
+      if (!booking.stylist_id || !selectedDate) {
+        setBookedSlots([]);
+        return;
+      }
+      const rpc = supabase.rpc as unknown as (fn: string, args: Record<string, string>) => Promise<{ data: BookedSlot[] | null }>;
+      const { data } = await rpc("get_booked_appointment_slots", {
+        _stylist_id: booking.stylist_id,
+        _day: format(selectedDate, "yyyy-MM-dd"),
+      });
+      setBookedSlots(data ?? []);
+    };
+    loadBookedSlots();
+  }, [booking.stylist_id, selectedDate]);
+
   const selectedService = services.find((service) => service.id === booking.service_id) ?? services[0];
   const selectedStylist = stylists.find((stylist) => stylist.id === booking.stylist_id);
   const serviceGroups = useMemo(() => ["Men", "Women", "Kids", "Treatments"].map((category) => ({ category, items: services.filter((service) => service.category === category) })), [services]);
@@ -188,6 +212,15 @@ const Index = () => {
   const todayIso = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const availableTimeSlots = timeSlots.filter((slot) => {
+    if (!selectedDate) return true;
+    const [hours, minutes] = slot.split(":").map(Number);
+    const slotStart = new Date(selectedDate);
+    slotStart.setHours(hours, minutes, 0, 0);
+    const slotEnd = new Date(slotStart.getTime() + (selectedService?.duration_minutes ?? 45) * 60 * 1000);
+    if (slotStart <= new Date()) return false;
+    return !bookedSlots.some((booked) => slotStart < new Date(booked.appointment_end) && slotEnd > new Date(booked.appointment_start));
+  });
 
   const submitBooking = async (event: React.FormEvent) => {
     event.preventDefault();
