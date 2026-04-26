@@ -343,13 +343,13 @@ const Index = () => {
           <div className="hidden items-center gap-7 text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex">
             {navLinks.map(([label, href]) => <a key={href} className="transition-colors hover:text-primary" href={href}>{label}</a>)}
           </div>
-          <div className="hidden md:block"><Button variant="hero" size="sm" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button></div>
-          <button type="button" aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
+          <div className="hidden items-center gap-3 md:flex"><button type="button" onClick={() => setLanguage(language === "de" ? "en" : "de")} className="border border-primary/35 px-3 py-2 text-xs uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground">{language === "de" ? "DE" : "EN"}</button><Button variant="hero" size="sm" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button></div>
+          <button type="button" aria-label="Menü öffnen" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
         </div>
       </nav>
       <div className={`fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-opacity md:hidden ${mobileMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setMobileMenuOpen(false)} />
       <aside className={`fixed right-0 top-0 z-[61] h-full w-[min(84vw,22rem)] border-l border-primary/25 bg-card p-6 shadow-elegant transition-transform duration-500 ease-out md:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">{salonName}</span><button type="button" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
+        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">{salonName}</span><button type="button" aria-label="Menü schließen" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
         <div className="mt-12 grid gap-5 text-lg text-muted-foreground">{navLinks.map(([label, href]) => <a key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="border-b border-border pb-4 font-display text-3xl text-foreground transition-colors hover:text-primary">{label}</a>)}</div>
         <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#booking" onClick={() => setMobileMenuOpen(false)}>{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button>
       </aside>
