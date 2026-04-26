@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
 import {
   CalendarDays,
+  CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -18,7 +20,9 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/salon-hero.jpg";
@@ -52,6 +56,11 @@ type Testimonial = {
   rating: number;
   quote: string;
   service_name: string | null;
+};
+
+type BookedSlot = {
+  appointment_start: string;
+  appointment_end: string;
 };
 
 const stylistImages: Record<string, string> = {
