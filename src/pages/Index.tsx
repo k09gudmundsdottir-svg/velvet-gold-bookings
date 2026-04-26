@@ -250,6 +250,9 @@ const Index = () => {
     }
     toast.success("Appointment requested. Email confirmation is ready to connect.");
     setBooking({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
+    setSelectedDate(undefined);
+    setSelectedTime("");
+    setBookingStep(1);
   };
 
   const submitContact = async (event: React.FormEvent) => {
