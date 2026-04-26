@@ -185,7 +185,12 @@ const Index = () => {
       return;
     }
     setIsContacting(true);
-    const { error } = await supabase.from("contact_messages").insert({ ...parsed.data, phone: parsed.data.phone || null });
+    const { error } = await supabase.from("contact_messages").insert({
+      name: parsed.data.name,
+      email: parsed.data.email,
+      phone: parsed.data.phone || null,
+      message: parsed.data.message,
+    });
     setIsContacting(false);
     if (error) {
       toast.error("Message could not be sent.");
