@@ -9,6 +9,8 @@ import {
   Crown,
   Gift,
   Mail,
+  Menu,
+  MessageCircle,
   MapPin,
   Phone,
   Scissors,
@@ -16,6 +18,8 @@ import {
   Star,
   TrendingUp,
   Users,
+  X,
+  Instagram,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -92,6 +96,13 @@ const fallbackTestimonials: Testimonial[] = [
 
 const bookingCategories = ["Men", "Women", "Treatments"];
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+const navLinks = [
+  ["Services", "#services"],
+  ["Stylists", "#team"],
+  ["Gallery", "#gallery"],
+  ["Contact", "#contact"],
+];
+const instagramHandle = "maisonnoiratelier";
 
 const bookingSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
@@ -136,6 +147,9 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
+  const [showLoader, setShowLoader] = useState(() => !window.sessionStorage.getItem("maison-noir-loaded"));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: -120, y: -120 });
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
   const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -155,6 +169,21 @@ const Index = () => {
       if (testimonialData?.length) setTestimonials(testimonialData);
     };
     loadSalonData();
+  }, []);
+
+  useEffect(() => {
+    if (!showLoader) return;
+    const timer = window.setTimeout(() => {
+      window.sessionStorage.setItem("maison-noir-loaded", "true");
+      setShowLoader(false);
+    }, 1450);
+    return () => window.clearTimeout(timer);
+  }, [showLoader]);
+
+  useEffect(() => {
+    const updateCursor = (event: PointerEvent) => setCursorPosition({ x: event.clientX, y: event.clientY });
+    window.addEventListener("pointermove", updateCursor);
+    return () => window.removeEventListener("pointermove", updateCursor);
   }, []);
 
   useEffect(() => {
@@ -296,18 +325,25 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      {showLoader && <div className="fixed inset-0 z-[80] grid place-items-center bg-background"><div className="relative grid size-36 place-items-center border border-primary/35"><div className="absolute inset-3 animate-spin border border-primary/20 border-t-primary" /><Scissors className="size-10 text-primary" /><p className="absolute -bottom-10 font-display text-2xl tracking-[0.22em] text-primary">MN</p></div></div>}
+      <div className="pointer-events-none fixed z-[70] hidden size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-2xl transition-transform duration-100 md:block" style={{ left: cursorPosition.x, top: cursorPosition.y }} />
+      <a href="https://wa.me/493012345678?text=Hello%20Maison%20Noir%2C%20I%20would%20like%20to%20book%20an%20appointment." target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp" className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center border border-primary bg-card text-primary shadow-elegant transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground"><MessageCircle className="size-6" /></a>
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <a href="#home" className="font-display text-xl uppercase tracking-[0.28em] text-primary">Maison Noir</a>
           <div className="hidden items-center gap-7 text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex">
-            <a className="transition-colors hover:text-primary" href="#services">Services</a>
-            <a className="transition-colors hover:text-primary" href="#team">Stylists</a>
-            <a className="transition-colors hover:text-primary" href="#gallery">Gallery</a>
-            <a className="transition-colors hover:text-primary" href="#contact">Contact</a>
+            {navLinks.map(([label, href]) => <a key={href} className="transition-colors hover:text-primary" href={href}>{label}</a>)}
           </div>
-          <Button variant="hero" size="sm" asChild><a href="#booking">Book Now</a></Button>
+          <div className="hidden md:block"><Button variant="hero" size="sm" asChild><a href="#booking">Book Now</a></Button></div>
+          <button type="button" aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
         </div>
       </nav>
+      <div className={`fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-opacity md:hidden ${mobileMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setMobileMenuOpen(false)} />
+      <aside className={`fixed right-0 top-0 z-[61] h-full w-[min(84vw,22rem)] border-l border-primary/25 bg-card p-6 shadow-elegant transition-transform duration-500 ease-out md:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">Maison Noir</span><button type="button" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
+        <div className="mt-12 grid gap-5 text-lg text-muted-foreground">{navLinks.map(([label, href]) => <a key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="border-b border-border pb-4 font-display text-3xl text-foreground transition-colors hover:text-primary">{label}</a>)}</div>
+        <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#booking" onClick={() => setMobileMenuOpen(false)}>Book Now</a></Button>
+      </aside>
 
       <section id="home" className="relative flex min-h-screen items-center overflow-hidden pt-24">
         <img src={heroImage} alt="Luxury barbershop and hair salon interior" className="absolute inset-0 h-full w-full object-cover" width={1600} height={1000} />
@@ -402,6 +438,15 @@ const Index = () => {
                 <input aria-label="Before after slider" type="range" min="15" max="85" value={beforeAfter} onChange={(event) => setBeforeAfter(Number(event.target.value))} className="absolute inset-x-8 bottom-6 accent-primary" />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="reveal-on-scroll bg-section py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Instagram</p><h2 className="section-title">Follow our work @{instagramHandle}</h2></div><Button variant="glass" asChild><a href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer"><Instagram /> Follow</a></Button></div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[galleryMen, galleryColor, galleryTreatment].map((image, index) => <a key={image} href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer" className="group relative block overflow-hidden border border-border bg-card"><img src={image} alt={["Editorial barber cut from Maison Noir Instagram", "Balayage color work from Maison Noir Instagram", "Gloss treatment result from Maison Noir Instagram"][index]} className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" /><div className="absolute inset-0 grid place-items-center bg-background/0 text-primary opacity-0 transition-all group-hover:bg-background/55 group-hover:opacity-100"><Instagram className="size-8" /></div></a>)}
           </div>
         </div>
       </section>
