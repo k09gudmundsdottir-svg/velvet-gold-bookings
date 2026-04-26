@@ -131,6 +131,11 @@ const Index = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [beforeAfter, setBeforeAfter] = useState(52);
+  const [bookingStep, setBookingStep] = useState(1);
+  const [bookingCategory, setBookingCategory] = useState("Men");
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState("");
+  const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
   const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
   const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -177,8 +182,12 @@ const Index = () => {
   }, [services.length, stylists.length, testimonials.length]);
 
   const selectedService = services.find((service) => service.id === booking.service_id) ?? services[0];
+  const selectedStylist = stylists.find((stylist) => stylist.id === booking.stylist_id);
   const serviceGroups = useMemo(() => ["Men", "Women", "Kids", "Treatments"].map((category) => ({ category, items: services.filter((service) => service.category === category) })), [services]);
+  const filteredBookingServices = services.filter((service) => service.category === bookingCategory);
   const todayIso = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const submitBooking = async (event: React.FormEvent) => {
     event.preventDefault();
