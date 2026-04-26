@@ -9,6 +9,8 @@ import {
   Crown,
   Gift,
   Mail,
+  Menu,
+  MessageCircle,
   MapPin,
   Phone,
   Scissors,
@@ -16,6 +18,8 @@ import {
   Star,
   TrendingUp,
   Users,
+  X,
+  Instagram,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -92,6 +96,13 @@ const fallbackTestimonials: Testimonial[] = [
 
 const bookingCategories = ["Men", "Women", "Treatments"];
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+const navLinks = [
+  ["Services", "#services"],
+  ["Stylists", "#team"],
+  ["Gallery", "#gallery"],
+  ["Contact", "#contact"],
+];
+const instagramHandle = "maisonnoiratelier";
 
 const bookingSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
