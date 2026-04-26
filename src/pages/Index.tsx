@@ -443,6 +443,15 @@ const Index = () => {
       </section>
 
       <section className="reveal-on-scroll bg-section py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Instagram</p><h2 className="section-title">Follow our work @{instagramHandle}</h2></div><Button variant="glass" asChild><a href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer"><Instagram /> Follow</a></Button></div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[galleryMen, galleryColor, galleryTreatment].map((image, index) => <a key={image} href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer" className="group relative block overflow-hidden border border-border bg-card"><img src={image} alt={["Editorial barber cut from Maison Noir Instagram", "Balayage color work from Maison Noir Instagram", "Gloss treatment result from Maison Noir Instagram"][index]} className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" /><div className="absolute inset-0 grid place-items-center bg-background/0 text-primary opacity-0 transition-all group-hover:bg-background/55 group-hover:opacity-100"><Instagram className="size-8" /></div></a>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="reveal-on-scroll bg-section py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[1fr_0.8fr] lg:px-8">
           <div className="border border-border bg-card p-8 shadow-card md:p-12">
             <div className="mb-6 flex gap-1 text-primary">{Array.from({ length: testimonials[activeTestimonial]?.rating ?? 5 }).map((_, index) => <Star key={index} className="size-5 fill-current" />)}</div>
