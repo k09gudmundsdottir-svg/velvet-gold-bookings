@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+      const basePath = "/velvet-gold-bookings/";
+      const path = window.location.pathname;
+      const relativePath = path.startsWith(basePath) ? path.slice(basePath.length) : path.replace(/^\//, "");
+      const search = window.location.search;
+      const hash = window.location.hash;
+      const redirect = basePath + "?redirect=" + encodeURIComponent("/" + relativePath + search + hash);
+      window.location.replace(redirect);
+    </script>
+  </head>
+  <body></body>
+</html>
