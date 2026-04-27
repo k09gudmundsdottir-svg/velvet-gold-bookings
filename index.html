@@ -19,6 +19,15 @@
     <meta name="twitter:title" content="Maison Noir | Luxury Barbershop & Hair Salon" />
     <meta name="twitter:description" content="Book luxury grooming and couture hair appointments with Maison Noir." />
     <meta name="twitter:image" content="/og-maison-noir.jpg" />
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var redirect = params.get("redirect");
+        if (redirect) {
+          window.history.replaceState(null, "", redirect);
+        }
+      })();
+    </script>
   </head>
 
   <body>
