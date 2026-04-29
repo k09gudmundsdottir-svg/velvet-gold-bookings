@@ -44,8 +44,8 @@ const Admin = () => {
   useEffect(() => {
     const checkAdmin = async () => {
       if (!session?.user.id) { setIsAdmin(false); return; }
-      const { data } = await supabase.rpc("has_role", { _user_id: session.user.id, _role: "admin" });
-      setIsAdmin(Boolean(data));
+      const { data, error } = await db.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
+      setIsAdmin(!error && Boolean(data));
     };
     checkAdmin();
   }, [session]);
