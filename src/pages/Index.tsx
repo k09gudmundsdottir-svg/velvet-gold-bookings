@@ -1,191 +1,103 @@
-import { useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { useEffect, useState } from "react";
 import {
+  Activity,
+  AlertCircle,
   CalendarDays,
-  CalendarIcon,
-  ChevronLeft,
+  CheckCircle2,
   ChevronRight,
+  ClipboardList,
   Clock,
-  Crown,
-  Gift,
+  FileText,
+  HeartPulse,
   Mail,
+  MapPin,
   Menu,
   MessageCircle,
-  MapPin,
   Phone,
-  Scissors,
-  Sparkles,
-  Star,
-  TrendingUp,
-  Users,
+  ShieldCheck,
+  Stethoscope,
+  Syringe,
+  UserRound,
   X,
-  Instagram,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import heroImage from "@/assets/salon-hero.jpg";
-import amaraImage from "@/assets/stylist-amara.jpg";
-import leonImage from "@/assets/stylist-leon.jpg";
-import sofiaImage from "@/assets/stylist-sofia.jpg";
-import galleryMen from "@/assets/gallery-men.jpg";
-import galleryColor from "@/assets/gallery-color.jpg";
-import galleryTreatment from "@/assets/gallery-treatment.jpg";
+import heroImage from "@/assets/ordination-hero.jpg";
+import doctorPortrait from "@/assets/doctor-portrait.jpg";
 
-type Service = {
-  id: string;
-  name: string;
-  category: string;
-  description: string | null;
-  price_cents: number;
-  duration_minutes: number;
-};
+const practiceName = "Dr. Alina Thordarson";
+const practiceSubtitle = "Ärztin für Allgemeinmedizin";
+const practiceAddress = "Quellenstraße 18–20, 2763 Neusiedl";
+const practicePhone = "02632/73177";
+const practiceEmail = "ordination@dralinathordarson.at";
+const whatsappHref = "https://wa.me/43263273177?text=Guten%20Tag%2C%20ich%20habe%20eine%20Frage%20zur%20Ordination.";
 
-type Stylist = {
-  id: string;
-  name: string;
-  role: string;
-  specialty: string;
-  bio: string | null;
-  years_experience: number;
-};
-
-type Testimonial = {
-  customer_name: string;
-  rating: number;
-  quote: string;
-  service_name: string | null;
-};
-
-type BookedSlot = {
-  appointment_start: string;
-  appointment_end: string;
-};
-
-const stylistImages: Record<string, string> = {
-  "Anna Berger": amaraImage,
-  "Lukas Steiner": leonImage,
-  "Mira Novak": sofiaImage,
-};
-
-const fallbackServices: Service[] = [
-  { id: "cut-men", name: "Herrenhaarschnitt", category: "Men", description: "Klassischer Schnitt mit Styling und Konturen", price_cents: 2500, duration_minutes: 30 },
-  { id: "beard", name: "Herrenhaarschnitt & Bart", category: "Men", description: "Haarschnitt, Bartform und Pflegefinish", price_cents: 3900, duration_minutes: 45 },
-  { id: "machine", name: "Maschinenschnitt", category: "Men", description: "Präziser Kurzhaarschnitt mit Maschine", price_cents: 1800, duration_minutes: 20 },
-  { id: "cut-women", name: "Damenhaarschnitt", category: "Women", description: "Beratung, Schnitt, Föhnen und Finish", price_cents: 4500, duration_minutes: 60 },
-  { id: "blowdry", name: "Waschen & Föhnen", category: "Women", description: "Schonende Pflegewäsche und professionelles Styling", price_cents: 3200, duration_minutes: 35 },
-  { id: "color", name: "Färben ab", category: "Women", description: "Ansatz oder Farbauffrischung inklusive Beratung", price_cents: 6500, duration_minutes: 90 },
-  { id: "balayage", name: "Balayage ab", category: "Women", description: "Natürliche Farbverläufe mit Gloss-Finish", price_cents: 12000, duration_minutes: 150 },
-  { id: "care", name: "Intensivpflege Treatment", category: "Treatments", description: "Aufbauende Pflegekur mit Kopfmassage", price_cents: 2900, duration_minutes: 30 },
-  { id: "keratin", name: "Keratin Glättung ab", category: "Treatments", description: "Glättendes Premium-Treatment für seidigen Glanz", price_cents: 14500, duration_minutes: 120 },
-];
-
-const fallbackStylists: Stylist[] = [
-  { id: "anna", name: "Anna Berger", role: "Master Stylistin", specialty: "Damenhaarschnitte, Balayage und Farbberatung", bio: "Ruhige Präzision, typgerechte Beratung und elegante Looks für jeden Tag.", years_experience: 11 },
-  { id: "lukas", name: "Lukas Steiner", role: "Barber & Herrenstylist", specialty: "Herrenhaarschnitte, Bartformen und Konturen", bio: "Klassisches Barber-Handwerk mit modernem Wiener Finish.", years_experience: 8 },
-  { id: "mira", name: "Mira Novak", role: "Color Specialist", specialty: "Färben, Glossing und Pflege-Treatments", bio: "Spezialistin für natürliche Farbverläufe, Glanz und gesunde Haarstruktur.", years_experience: 9 },
-];
-
-const fallbackTestimonials: Testimonial[] = [
-  { customer_name: "Julia M.", rating: 5, quote: "Wunderschöner Salon, ehrliche Beratung und mein Schnitt sitzt perfekt.", service_name: "Damenhaarschnitt" },
-  { customer_name: "Markus H.", rating: 5, quote: "Sehr sauberer Herrenhaarschnitt und Bartservice — genau so muss es sein.", service_name: "Herrenhaarschnitt & Bart" },
-  { customer_name: "Elena K.", rating: 5, quote: "Die Farbe wirkt natürlich, hochwertig und glänzt unglaublich schön.", service_name: "Balayage" },
-];
-
-const bookingCategories = ["Men", "Women", "Treatments"];
-const timeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 const navLinks = [
-  ["Leistungen", "#services"],
+  ["Leistungen", "#leistungen"],
+  ["Ordination", "#ordination"],
   ["Team", "#team"],
-  ["Galerie", "#gallery"],
-  ["Kontakt", "#contact"],
+  ["Kontakt", "#kontakt"],
 ];
-const salonName = "[DEIN SALON NAME]";
-const salonAddress = "[DEINE ADRESSE]";
-const salonPhone = "[DEINE NUMMER]";
-const whatsappHref = "https://wa.me/43123456789?text=Hallo%20%5BDEIN%20SALON%20NAME%5D%2C%20ich%20m%C3%B6chte%20gerne%20einen%20Termin%20buchen.";
-const instagramHandle = "deinsalonname";
-const categoryLabels: Record<string, string> = { Men: "Herren", Women: "Damen", Treatments: "Treatments", Kids: "Kinder" };
 
-const bookingSchema = z.object({
-  customer_name: z.string().trim().min(2).max(120),
-  customer_email: z.string().trim().email().max(255),
-  customer_phone: z.string().trim().min(6).max(40).optional().or(z.literal("")),
-  service_id: z.string().min(1),
-  stylist_id: z.string().min(1),
-  appointment_start: z.string().min(1),
-  notes: z.string().trim().max(500).optional(),
-});
+const openingHours = [
+  ["Montag", "08:00 – 12:00"],
+  ["Dienstag", "08:00 – 12:00"],
+  ["Mittwoch", "16:00 – 18:00"],
+  ["Donnerstag", "08:00 – 12:00"],
+  ["Freitag", "keine Ordination"],
+];
 
-const contactSchema = z.object({
+const services = [
+  [HeartPulse, "Vorsorge-Untersuchungen", "Strukturierte Gesundenuntersuchungen mit persönlicher Beratung und klaren nächsten Schritten."],
+  [ClipboardList, "Labor & Befunde", "Blutabnahmen, Befundbesprechungen und Verlaufskontrollen direkt in der Ordination."],
+  [Activity, "EKG & OP-Freigaben", "Basisdiagnostik, internistische Einschätzung und Freigaben vor geplanten Eingriffen."],
+  [Syringe, "Impfberatung", "Individuelle Impfpläne, Reiseberatung und saisonale Empfehlungen für Erwachsene und Familien."],
+  [ShieldCheck, "Mutter-Kind-Pass", "Begleitung durch wichtige Vorsorge- und Kontrolltermine mit Ruhe und Sorgfalt."],
+  [Stethoscope, "Wundversorgung", "Versorgung kleiner Verletzungen, Nähte, Verbandswechsel und Nachkontrollen."],
+  [UserRound, "Ernährungsberatung", "Alltagstaugliche Beratung bei Prävention, Gewichtsmanagement und Stoffwechselthemen."],
+  [FileText, "Medikamentenbestellung", "Ab 01.05.2026 können Dauermedikamente bequem über die Website vorbestellt werden."],
+];
+
+const updates = [
+  { title: "Neue Ordinationszeiten ab 01.01.2026", text: "Montag, Dienstag und Donnerstag 08:00–12:00, Mittwoch 16:00–18:00, Freitag keine Ordination." },
+  { title: "Medikamente online bestellen", text: "Ab 01.05.2026 wird eine digitale Vorbestellung für Dauermedikamente über diese Website möglich sein." },
+  { title: "Wochenenddienst", text: "Nächste Dienste: Sonntag 31.05.2026 und Sonntag 21.06.2026 jeweils 08:00–14:00." },
+];
+
+const requestSchema = z.object({
   name: z.string().trim().min(2).max(120),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().min(6).max(40).optional().or(z.literal("")),
+  phone: z.string().trim().min(6).max(40),
+  email: z.string().trim().email().max(255).optional().or(z.literal("")),
   message: z.string().trim().min(10).max(2000),
 });
-
-const newsletterSchema = z.object({ email: z.string().trim().email().max(255) });
-
-const formatPrice = (cents: number) => new Intl.NumberFormat("de-AT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(cents / 100);
-
-const formatBookingDateTime = (value: string) => value ? format(new Date(value), "dd.MM.yyyy 'um' HH:mm") : "Nicht ausgewählt";
 
 const isOpenNow = () => {
   const now = new Date();
   const day = now.getDay();
   const hour = now.getHours();
-  if (day === 0 || day === 1) return false;
-  if (day === 6) return hour >= 8 && hour < 17;
-  return hour >= 9 && hour < 19;
+  if (day === 1 || day === 2 || day === 4) return hour >= 8 && hour < 12;
+  if (day === 3) return hour >= 16 && hour < 18;
+  return false;
 };
 
 const Index = () => {
-  const [services, setServices] = useState<Service[]>(fallbackServices);
-  const [stylists, setStylists] = useState<Stylist[]>(fallbackStylists);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [beforeAfter, setBeforeAfter] = useState(52);
-  const [bookingStep, setBookingStep] = useState(1);
-  const [bookingCategory, setBookingCategory] = useState("Men");
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [selectedTime, setSelectedTime] = useState("");
-  const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([]);
-  const [language, setLanguage] = useState<"de" | "en">("de");
-  const [showLoader, setShowLoader] = useState(() => !window.sessionStorage.getItem("salon-loaded"));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLoader, setShowLoader] = useState(() => !window.sessionStorage.getItem("ordination-loaded"));
   const [cursorPosition, setCursorPosition] = useState({ x: -120, y: -120 });
-  const [booking, setBooking] = useState({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
-  const [contact, setContact] = useState({ name: "", email: "", phone: "", message: "" });
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [isBooking, setIsBooking] = useState(false);
+  const [contact, setContact] = useState({ name: "", phone: "", email: "", message: "" });
   const [isContacting, setIsContacting] = useState(false);
   const openNow = isOpenNow();
 
   useEffect(() => {
-    const loadSalonData = async () => {
-      const [{ data: serviceData }, { data: stylistData }, { data: testimonialData }] = await Promise.all([
-        supabase.from("services").select("id,name,category,description,price_cents,duration_minutes").eq("is_active", true).order("sort_order"),
-        supabase.from("stylists").select("id,name,role,specialty,bio,years_experience").eq("is_active", true).order("sort_order"),
-        supabase.from("testimonials").select("customer_name,rating,quote,service_name").eq("is_featured", true).order("created_at", { ascending: false }),
-      ]);
-      if (serviceData?.length) setServices(serviceData);
-      if (stylistData?.length) setStylists(stylistData);
-      if (testimonialData?.length) setTestimonials(testimonialData);
-    };
-    loadSalonData();
-  }, []);
-
-  useEffect(() => {
     if (!showLoader) return;
     const timer = window.setTimeout(() => {
-      window.sessionStorage.setItem("salon-loaded", "true");
+      window.sessionStorage.setItem("ordination-loaded", "true");
       setShowLoader(false);
-    }, 1450);
+    }, 1100);
     return () => window.clearTimeout(timer);
   }, [showLoader]);
 
@@ -194,11 +106,6 @@ const Index = () => {
     window.addEventListener("pointermove", updateCursor);
     return () => window.removeEventListener("pointermove", updateCursor);
   }, []);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setActiveTestimonial((current) => (current + 1) % testimonials.length), 5200);
-    return () => window.clearInterval(timer);
-  }, [testimonials.length]);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -217,85 +124,11 @@ const Index = () => {
     }, { threshold: 0.14, rootMargin: "0px 0px -60px 0px" });
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, [services.length, stylists.length, testimonials.length]);
-
-  useEffect(() => {
-    if (!selectedDate || !selectedTime) return;
-    const [hours, minutes] = selectedTime.split(":").map(Number);
-    const nextDate = new Date(selectedDate);
-    nextDate.setHours(hours, minutes, 0, 0);
-    setBooking((current) => ({ ...current, appointment_start: nextDate.toISOString().slice(0, 16) }));
-  }, [selectedDate, selectedTime]);
-
-  useEffect(() => {
-    const loadBookedSlots = async () => {
-      if (!booking.stylist_id || !selectedDate) {
-        setBookedSlots([]);
-        return;
-      }
-      const rpc = supabase.rpc as unknown as (fn: string, args: Record<string, string>) => Promise<{ data: BookedSlot[] | null }>;
-      const { data } = await rpc("get_booked_appointment_slots", {
-        _stylist_id: booking.stylist_id,
-        _day: format(selectedDate, "yyyy-MM-dd"),
-      });
-      setBookedSlots(data ?? []);
-    };
-    loadBookedSlots();
-  }, [booking.stylist_id, selectedDate]);
-
-  const selectedService = services.find((service) => service.id === booking.service_id) ?? services[0];
-  const selectedStylist = stylists.find((stylist) => stylist.id === booking.stylist_id);
-  const serviceGroups = useMemo(() => ["Men", "Women", "Kids", "Treatments"].map((category) => ({ category, items: services.filter((service) => service.category === category) })), [services]);
-  const filteredBookingServices = services.filter((service) => service.category === bookingCategory);
-  const todayIso = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const availableTimeSlots = timeSlots.filter((slot) => {
-    if (!selectedDate) return true;
-    const [hours, minutes] = slot.split(":").map(Number);
-    const slotStart = new Date(selectedDate);
-    slotStart.setHours(hours, minutes, 0, 0);
-    const slotEnd = new Date(slotStart.getTime() + (selectedService?.duration_minutes ?? 45) * 60 * 1000);
-    if (slotStart <= new Date()) return false;
-    return !bookedSlots.some((booked) => slotStart < new Date(booked.appointment_end) && slotEnd > new Date(booked.appointment_start));
-  });
-
-  const submitBooking = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const parsed = bookingSchema.safeParse(booking);
-    if (!parsed.success) {
-      toast.error("Bitte vervollständigen Sie die Buchungsdetails.");
-      return;
-    }
-    setIsBooking(true);
-    const start = new Date(parsed.data.appointment_start);
-    const duration = selectedService?.duration_minutes ?? 45;
-    const end = new Date(start.getTime() + duration * 60 * 1000);
-    const { error } = await supabase.from("appointments").insert({
-      customer_name: parsed.data.customer_name,
-      customer_email: parsed.data.customer_email,
-      customer_phone: parsed.data.customer_phone || null,
-      service_id: parsed.data.service_id,
-      stylist_id: parsed.data.stylist_id,
-      appointment_start: start.toISOString(),
-      appointment_end: end.toISOString(),
-      notes: parsed.data.notes || null,
-    });
-    setIsBooking(false);
-    if (error) {
-      toast.error("Die Buchung konnte nicht gespeichert werden. Bitte wählen Sie eine andere Zeit.");
-      return;
-    }
-    toast.success("Termin angefragt — wir bestätigen ihn in Kürze.");
-    setBooking({ customer_name: "", customer_email: "", customer_phone: "", service_id: "", stylist_id: "", appointment_start: "", notes: "" });
-    setSelectedDate(undefined);
-    setSelectedTime("");
-    setBookingStep(1);
-  };
+  }, []);
 
   const submitKontakt = async (event: React.FormEvent) => {
     event.preventDefault();
-    const parsed = contactSchema.safeParse(contact);
+    const parsed = requestSchema.safeParse(contact);
     if (!parsed.success) {
       toast.error("Bitte geben Sie gültige Kontaktdaten ein.");
       return;
@@ -303,198 +136,111 @@ const Index = () => {
     setIsContacting(true);
     const { error } = await supabase.from("contact_messages").insert({
       name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone || null,
+      email: parsed.data.email || `${parsed.data.phone.replace(/\s/g, "")}@telefon.local`,
+      phone: parsed.data.phone,
       message: parsed.data.message,
     });
     setIsContacting(false);
     if (error) {
-      toast.error("Nachricht konnte nicht gesendet werden.");
+      toast.error("Nachricht konnte nicht gesendet werden. Bitte rufen Sie die Ordination an.");
       return;
     }
-    toast.success("Nachricht gesendet — wir melden uns in Kürze.");
-    setContact({ name: "", email: "", phone: "", message: "" });
-  };
-
-  const submitNewsletter = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const parsed = newsletterSchema.safeParse({ email: newsletterEmail });
-    if (!parsed.success) {
-      toast.error("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-      return;
-    }
-    const { error } = await supabase.from("newsletter_signups").insert({ email: parsed.data.email, consent: true });
-    if (error) {
-      toast.info("Ihr Willkommenscode wartet möglicherweise bereits.");
-      return;
-    }
-    toast.success("Willkommen — Ihr Willkommenscode ist reserviert.");
-    setNewsletterEmail("");
+    toast.success("Anfrage gesendet — die Ordination meldet sich bei Ihnen.");
+    setContact({ name: "", phone: "", email: "", message: "" });
   };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {showLoader && <div className="fixed inset-0 z-[80] grid place-items-center bg-background"><div className="relative grid size-36 place-items-center border border-primary/35"><div className="absolute inset-3 animate-spin border border-primary/20 border-t-primary" /><Scissors className="size-10 text-primary" /><p className="absolute -bottom-10 font-display text-2xl tracking-[0.22em] text-primary">{salonName.split(" ").map((word) => word[0]).join("").replace(/[\[\]]/g, "").slice(0, 2) || "DS"}</p></div></div>}
-      <div className="pointer-events-none fixed z-[70] hidden size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-2xl transition-transform duration-100 md:block" style={{ left: cursorPosition.x, top: cursorPosition.y }} />
-      <a href={whatsappHref} target="_blank" rel="noreferrer" aria-label="Auf WhatsApp schreiben" className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center border border-primary bg-card text-primary shadow-elegant transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground"><MessageCircle className="size-6" /></a>
-      <nav className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+      {showLoader && <div className="fixed inset-0 z-[80] grid place-items-center bg-background"><div className="relative grid size-36 place-items-center border border-primary/35"><div className="absolute inset-3 animate-spin border border-primary/20 border-t-primary" /><Stethoscope className="size-10 text-primary" /><p className="absolute -bottom-10 font-display text-2xl tracking-[0.22em] text-primary">AT</p></div></div>}
+      <div className="pointer-events-none fixed z-[70] hidden size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/18 blur-2xl transition-transform duration-100 md:block" style={{ left: cursorPosition.x, top: cursorPosition.y }} />
+      <a href={whatsappHref} target="_blank" rel="noreferrer" aria-label="Nachricht schreiben" className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center border border-primary bg-card text-primary shadow-elegant transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground"><MessageCircle className="size-6" /></a>
+
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <a href="#home" className="font-display text-xl uppercase tracking-[0.28em] text-primary">{salonName}</a>
+          <a href="#home" className="font-display text-lg uppercase tracking-[0.18em] text-primary md:text-xl">{practiceName}</a>
           <div className="hidden items-center gap-7 text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex">
             {navLinks.map(([label, href]) => <a key={href} className="transition-colors hover:text-primary" href={href}>{label}</a>)}
           </div>
-          <div className="hidden items-center gap-3 md:flex"><button type="button" onClick={() => setLanguage(language === "de" ? "en" : "de")} className="border border-primary/35 px-3 py-2 text-xs uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground">{language === "de" ? "DE" : "EN"}</button><Button variant="hero" size="sm" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button></div>
+          <div className="hidden items-center gap-3 md:flex"><Button variant="glass" size="sm" asChild><a href={`tel:${practicePhone.replace(/\D/g, "")}`}><Phone /> Anrufen</a></Button><Button variant="hero" size="sm" asChild><a href="#kontakt">Termin anfragen</a></Button></div>
           <button type="button" aria-label="Menü öffnen" onClick={() => setMobileMenuOpen(true)} className="border border-primary/40 p-2 text-primary md:hidden"><Menu className="size-5" /></button>
         </div>
       </nav>
+
       <div className={`fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm transition-opacity md:hidden ${mobileMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setMobileMenuOpen(false)} />
       <aside className={`fixed right-0 top-0 z-[61] h-full w-[min(84vw,22rem)] border-l border-primary/25 bg-card p-6 shadow-elegant transition-transform duration-500 ease-out md:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">{salonName}</span><button type="button" aria-label="Menü schließen" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
+        <div className="flex items-center justify-between"><span className="font-display text-2xl text-primary">Ordination</span><button type="button" aria-label="Menü schließen" onClick={() => setMobileMenuOpen(false)} className="border border-border p-2 text-foreground"><X className="size-5" /></button></div>
         <div className="mt-12 grid gap-5 text-lg text-muted-foreground">{navLinks.map(([label, href]) => <a key={href} href={href} onClick={() => setMobileMenuOpen(false)} className="border-b border-border pb-4 font-display text-3xl text-foreground transition-colors hover:text-primary">{label}</a>)}</div>
-        <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#booking" onClick={() => setMobileMenuOpen(false)}>{language === "de" ? "Jetzt Buchen" : "Book Now"}</a></Button>
+        <Button className="mt-10 w-full" variant="hero" size="xl" asChild><a href="#kontakt" onClick={() => setMobileMenuOpen(false)}>Termin anfragen</a></Button>
       </aside>
 
       <section id="home" className="relative flex min-h-screen items-center overflow-hidden pt-24">
-        <img src={heroImage} alt="Luxury barbershop and hair salon interior" className="absolute inset-0 h-full w-full object-cover" width={1600} height={1000} />
+        <img src={heroImage} alt="Helle und moderne Ordination von Dr. Alina Thordarson" className="absolute inset-0 h-full w-full object-cover" width={1600} height={1000} />
         <div className="absolute inset-0 bg-hero-overlay" />
-        <div className="hero-grain pointer-events-none absolute inset-0 opacity-45" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_var(--x,30%)_var(--y,40%),hsl(var(--primary)/0.22),transparent_28rem)] motion-safe:transition-[background]" onPointerMove={(event) => {
-          const target = event.currentTarget as HTMLElement;
-          target.style.setProperty("--x", `${event.clientX}px`);
-          target.style.setProperty("--y", `${event.clientY}px`);
-        }} />
-        <div className="relative z-10 mx-auto grid max-w-7xl items-end gap-12 px-5 pb-16 pt-20 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
+        <div className="hero-grain pointer-events-none absolute inset-0 opacity-35" />
+        <div className="relative z-10 mx-auto grid max-w-7xl items-end gap-10 px-5 pb-14 pt-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
           <div className="animate-fade-up">
-            <p className="mb-5 inline-flex items-center gap-3 border border-primary/30 bg-card/45 px-4 py-2 text-xs uppercase tracking-[0.32em] text-primary backdrop-blur-md"><Crown className="size-4" /> Privates Salon Atelier</p>
-            <h1 className="max-w-4xl font-display text-5xl leading-[0.95] text-foreground md:text-7xl lg:text-8xl">Haarkunst. Pflege. Zeitlose Eleganz.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Ein hochwertiger Friseur- und Barber-Salon in Österreich für Gäste, die präzises Handwerk, persönliche Beratung und ein perfektes Finish erwarten.</p>
+            <p className="mb-5 inline-flex items-center gap-3 border border-primary/30 bg-card/55 px-4 py-2 text-xs uppercase tracking-[0.28em] text-primary backdrop-blur-md"><ShieldCheck className="size-4" /> Alle Kassen und Privat</p>
+            <h1 className="max-w-4xl font-display text-5xl leading-[0.95] text-foreground md:text-7xl lg:text-8xl">{practiceName}</h1>
+            <p className="mt-5 max-w-2xl text-xl leading-8 text-foreground/90">{practiceSubtitle} in Neusiedl/Pernitz — persönliche Hausarztmedizin, klare Abläufe und eine Ordination, in der Patientinnen und Patienten gut ankommen.</p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <Button variant="hero" size="xl" asChild><a href="#booking">{language === "de" ? "Jetzt Buchen" : "Book Now"} <CalendarDays /></a></Button>
-              <Button variant="glass" size="xl" asChild><a href="tel:+43123456789"><Phone /> Anrufen</a></Button>
+              <Button variant="hero" size="xl" asChild><a href="#kontakt"><CalendarDays /> Termin anfragen</a></Button>
+              <Button variant="glass" size="xl" asChild><a href={`tel:${practicePhone.replace(/\D/g, "")}`}><Phone /> {practicePhone}</a></Button>
             </div>
           </div>
           <div className="grid gap-4 animate-fade-up [animation-delay:180ms]">
-            <div className="border border-primary/20 bg-card/65 p-5 shadow-card backdrop-blur-xl">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Today</span>
-                <span className={`inline-flex items-center gap-2 text-sm ${openNow ? "text-success" : "text-destructive"}`}><span className="size-2 rounded-full bg-current" /> {openNow ? "Jetzt geöffnet" : "Geschlossen"}</span>
-              </div>
-              <p className="mt-4 font-display text-3xl text-foreground">Di–Fr 09:00–19:00</p>
-              <p className="mt-2 text-sm text-muted-foreground">Sa 08:00–17:00 · Mo & So geschlossen</p>
+            <div className="border border-primary/20 bg-card/75 p-5 shadow-card backdrop-blur-xl">
+              <div className="flex items-center justify-between gap-4"><span className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Heute</span><span className={`inline-flex items-center gap-2 text-sm ${openNow ? "text-success" : "text-destructive"}`}><span className="size-2 rounded-full bg-current" /> {openNow ? "Jetzt geöffnet" : "Geschlossen"}</span></div>
+              <p className="mt-4 font-display text-3xl text-foreground">Mo, Di, Do 08:00–12:00</p>
+              <p className="mt-2 text-sm text-muted-foreground">Mi 16:00–18:00 · Fr keine Ordination</p>
             </div>
-            <div className="grid grid-cols-3 border border-border/70 bg-background/75 text-center backdrop-blur-xl">
-              {["4.9★", "18k+", "12 yrs"].map((metric, index) => <div key={metric} className="border-r border-border/70 p-4 last:border-r-0"><p className="font-display text-2xl text-primary">{metric}</p><p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">{["Bewertung", "Gäste", "Handwerk"][index]}</p></div>)}
+            <div className="grid grid-cols-3 border border-border/70 bg-background/80 text-center backdrop-blur-xl">
+              {[["Hausarzt", "Medizin"], ["Alle", "Kassen"], ["Seit", "2020"]].map(([metric, label]) => <div key={metric} className="border-r border-border/70 p-4 last:border-r-0"><p className="font-display text-2xl text-primary">{metric}</p><p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">{label}</p></div>)}
             </div>
           </div>
         </div>
       </section>
 
-      <section id="booking" className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
-          <div>
-            <p className="section-kicker">Online Buchung</p>
-            <h2 className="section-title">Reservieren Sie Ihren Termin in sechs eleganten Schritten.</h2>
-            <p className="section-copy">Eine geführte Terminbuchung mit Live-Verfügbarkeit, sicherer Speicherung und finaler Übersicht vor der Bestätigung.</p>
-            <div className="mt-8 grid gap-3">
-              {["Kategorie", "Leistung", "Stylist", "Datum & Zeit", "Details", "Bestätigung"].map((label, index) => <button key={label} type="button" onClick={() => setBookingStep(index + 1)} className={`flex items-center gap-4 border p-4 text-left transition-all ${bookingStep === index + 1 ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/50"}`}><span className="flex size-8 items-center justify-center border border-primary/40 font-display text-primary">{index + 1}</span><span className="text-sm uppercase tracking-[0.2em] text-muted-foreground">{label}</span></button>)}
-            </div>
-          </div>
-          <form onSubmit={submitBooking} className="border border-primary/20 bg-card p-5 shadow-elegant md:p-8">
-            {bookingStep === 1 && <div className="animate-fade-up"><p className="section-kicker">Step 1</p><h3 className="font-display text-4xl text-foreground">Wählen Sie eine Kategorie.</h3><div className="mt-8 grid gap-4 md:grid-cols-3">{bookingCategories.map((category) => <button key={category} type="button" onClick={() => { setBookingCategory(category); setBooking({ ...booking, service_id: "" }); setBookingStep(2); }} className={`border p-6 text-left transition-all hover:-translate-y-1 hover:border-primary ${bookingCategory === category ? "border-primary bg-secondary" : "border-border bg-background"}`}><Scissors className="mb-5 size-7 text-primary" /><span className="font-display text-3xl text-foreground">{categoryLabels[category] ?? category}</span><span className="mt-3 block text-sm text-muted-foreground">{services.filter((service) => service.category === category).length} Leistungen verfügbar</span></button>)}</div></div>}
-            {bookingStep === 2 && <div className="animate-fade-up"><p className="section-kicker">Step 2</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Ihre Leistung.</h3><div className="mt-8 grid gap-4">{filteredBookingServices.map((service) => <button key={service.id} type="button" onClick={() => { setBooking({ ...booking, service_id: service.id }); setBookingStep(3); }} className={`group flex flex-col justify-between gap-4 border p-5 text-left transition-all hover:border-primary md:flex-row md:items-center ${booking.service_id === service.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><span><span className="block font-display text-2xl text-foreground">{service.name}</span><span className="mt-1 block text-sm text-muted-foreground">{service.description}</span></span><span className="flex items-center gap-5 text-primary"><span>{service.duration_minutes} Min.</span><span className="font-display text-2xl">{formatPrice(service.price_cents)}</span></span></button>)}</div></div>}
-            {bookingStep === 3 && <div className="animate-fade-up"><p className="section-kicker">Step 3</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Ihren Stylisten.</h3><div className="mt-8 grid gap-5 md:grid-cols-3">{stylists.map((stylist) => <button key={stylist.id} type="button" onClick={() => { setBooking({ ...booking, stylist_id: stylist.id }); setBookingStep(4); }} className={`overflow-hidden border text-left transition-all hover:-translate-y-1 hover:border-primary ${booking.stylist_id === stylist.id ? "border-primary bg-secondary" : "border-border bg-background"}`}><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="aspect-[4/5] w-full object-cover" loading="lazy" /><span className="block p-4"><span className="block font-display text-2xl text-foreground">{stylist.name}</span><span className="mt-1 block text-sm text-primary">{stylist.specialty}</span></span></button>)}</div></div>}
-            {bookingStep === 4 && <div className="animate-fade-up"><p className="section-kicker">Step 4</p><h3 className="font-display text-4xl text-foreground">Wählen Sie Datum und Uhrzeit.</h3><div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Popover><PopoverTrigger asChild><Button variant="glass" size="xl" className="justify-start text-left"><CalendarIcon />{selectedDate ? format(selectedDate, "PPP") : "Datum wählen"}</Button></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><Calendar mode="single" selected={selectedDate} onSelect={(date) => { setSelectedDate(date); setSelectedTime(""); }} disabled={(date) => date < today || date.getDay() === 0 || date.getDay() === 1} initialFocus /></PopoverContent></Popover><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{timeSlots.map((slot) => { const isAvailable = availableTimeSlots.includes(slot); return <button key={slot} type="button" disabled={!selectedDate || !isAvailable} onClick={() => { setSelectedTime(slot); setBookingStep(5); }} className={`border px-4 py-3 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 ${selectedTime === slot ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background hover:border-primary hover:text-primary"}`}>{slot}</button>; })}</div></div><p className="mt-5 text-sm text-muted-foreground"><Clock className="mr-2 inline size-4 text-primary" />Nicht verfügbare Zeiten werden anhand aktueller Buchungen ausgeblendet.</p></div>}
-            {bookingStep === 5 && <div className="animate-fade-up"><p className="section-kicker">Step 5</p><h3 className="font-display text-4xl text-foreground">Ihre Kontaktdaten.</h3><div className="mt-8 grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={booking.customer_name} onChange={(event) => setBooking({ ...booking, customer_name: event.target.value })} /><Input placeholder="E-Mail" type="email" value={booking.customer_email} onChange={(event) => setBooking({ ...booking, customer_email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={booking.customer_phone} onChange={(event) => setBooking({ ...booking, customer_phone: event.target.value })} /></div><Textarea className="mt-4 min-h-28" placeholder="Notizen, Wünsche oder Besonderheiten" value={booking.notes} onChange={(event) => setBooking({ ...booking, notes: event.target.value })} /><Button className="mt-6" variant="hero" size="lg" type="button" onClick={() => setBookingStep(6)}>Buchung prüfen</Button></div>}
-            {bookingStep === 6 && <div className="animate-fade-up"><p className="section-kicker">Step 6</p><h3 className="font-display text-4xl text-foreground">Bestätigen Sie Ihren Termin.</h3><div className="mt-8 grid gap-4 border border-border bg-background p-5"><p><span className="text-muted-foreground">Leistung:</span> <span className="text-foreground">{selectedService?.name} · {formatPrice(selectedService?.price_cents ?? 0)}</span></p><p><span className="text-muted-foreground">Dauer:</span> <span className="text-foreground">{selectedService?.duration_minutes} Minuten</span></p><p><span className="text-muted-foreground">Stylist:</span> <span className="text-foreground">{selectedStylist?.name ?? "Nicht ausgewählt"}</span></p><p><span className="text-muted-foreground">Datum:</span> <span className="text-foreground">{formatBookingDateTime(booking.appointment_start)}</span></p><p><span className="text-muted-foreground">Gast:</span> <span className="text-foreground">{booking.customer_name || "Nicht angegeben"} · {booking.customer_email || "Keine E-Mail"}</span></p></div><div className="mt-6 flex flex-col gap-3 sm:flex-row"><Button variant="glass" type="button" onClick={() => setBookingStep(5)}>Details ändern</Button><Button variant="hero" size="lg" type="submit" disabled={isBooking}>{isBooking ? "Wird angefragt…" : "Termin bestätigen"}</Button></div></div>}
-          </form>
+      <section className="reveal-on-scroll bg-section py-20">
+        <div className="mx-auto grid max-w-7xl gap-5 px-5 md:grid-cols-3 lg:px-8">
+          {updates.map((item) => <article key={item.title} className="border border-border bg-card p-6 shadow-card"><AlertCircle className="mb-4 size-7 text-primary" /><h2 className="font-display text-2xl text-foreground">{item.title}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{item.text}</p></article>)}
         </div>
       </section>
 
-      <section id="services" className="reveal-on-scroll py-24">
+      <section id="leistungen" className="reveal-on-scroll py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Leistungen & Preise</p><h2 className="section-title">Ausgewählte Leistungen mit österreichischen Preisen.</h2></div><p className="section-copy md:max-w-md">Jede Leistung beinhaltet Beratung, typgerechtes Finish und Pflegeempfehlung.</p></div>
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Leistungen</p><h2 className="section-title">Hausärztliche Versorgung mit klarer Struktur.</h2></div><p className="section-copy md:max-w-md">Von Akutfällen bis Vorsorge: die wichtigsten Leistungen einer modernen Allgemeinmedizin an einem Ort.</p></div>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {serviceGroups.map((group) => <article key={group.category} className="border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-card">
-              <h3 className="mb-5 font-display text-3xl text-primary">{categoryLabels[group.category] ?? group.category}</h3>
-              <div className="space-y-5">{group.items.map((service) => <div key={service.id} className="border-b border-border pb-4 last:border-b-0"><div className="flex justify-between gap-4"><p className="font-medium text-foreground">{service.name}</p><p className="text-primary">{formatPrice(service.price_cents)}</p></div><p className="mt-1 text-sm text-muted-foreground">{service.description}</p><p className="mt-2 text-xs uppercase tracking-[0.18em] text-accent-foreground">{service.duration_minutes} Minuten</p></div>)}</div>
-            </article>)}
+            {services.map(([Icon, title, text]) => <article key={String(title)} className="border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-card"><Icon className="mb-5 size-8 text-primary" /><h3 className="font-display text-2xl text-foreground">{String(title)}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{String(text)}</p></article>)}
           </div>
         </div>
       </section>
 
-      <section id="team" className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <p className="section-kicker">Team</p><h2 className="section-title mb-12">Stylisten mit Handschrift.</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {stylists.map((stylist) => <article key={stylist.id} className="group overflow-hidden border border-border bg-card shadow-card">
-              <div className="aspect-[3/4] overflow-hidden"><img src={stylistImages[stylist.name] ?? amaraImage} alt={`${stylist.name}, ${stylist.role}`} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" width={768} height={1024} /></div>
-              <div className="p-6"><p className="text-xs uppercase tracking-[0.25em] text-primary">{stylist.role}</p><h3 className="mt-2 font-display text-3xl text-foreground">{stylist.name}</h3><p className="mt-2 text-sm text-muted-foreground">{stylist.specialty}</p><p className="mt-4 text-sm leading-6 text-muted-foreground">{stylist.bio}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm text-accent-foreground">{stylist.years_experience}+ Jahre</span><Button variant="glass" size="sm" asChild><a href="#booking" onClick={() => setBooking((current) => ({ ...current, stylist_id: stylist.id }))}>Buchen</a></Button></div></div>
-            </article>)}
-          </div>
+      <section id="ordination" className="reveal-on-scroll bg-section py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+          <div><p className="section-kicker">Ordination</p><h2 className="section-title">Freundlich, persönlich und gut organisiert.</h2><p className="section-copy mt-6">In der Landpraxis steht ein respektvoller Umgangston, ein offenes Ohr für Anliegen und eine angenehme Atmosphäre im Mittelpunkt. Wartezeiten werden so transparent und kurz wie möglich gehalten.</p><div className="mt-8 grid gap-3">{["Alle Kassen und Privat", "Barrierearme Abläufe", "Rezepte und Befunde koordiniert", "Rasche Orientierung bei akuten Beschwerden"].map((item) => <p key={item} className="flex items-center gap-3 text-muted-foreground"><CheckCircle2 className="size-5 text-primary" />{item}</p>)}</div></div>
+          <div className="border border-primary/25 bg-card p-6 shadow-elegant"><div className="flex items-center gap-3"><Clock className="size-7 text-primary" /><h3 className="font-display text-3xl text-foreground">Ordinationszeiten</h3></div><div className="mt-6 grid gap-3">{openingHours.map(([day, hours]) => <div key={day} className="flex items-center justify-between border-b border-border pb-3 text-sm last:border-b-0"><span className="text-muted-foreground">{day}</span><span className="font-medium text-foreground">{hours}</span></div>)}</div><p className="mt-6 text-sm leading-6 text-muted-foreground">Bei Notfällen außerhalb der Öffnungszeiten wenden Sie sich bitte an 1450, den Ärztenotdienst oder in lebensbedrohlichen Situationen an 144.</p></div>
         </div>
       </section>
 
-      <section id="gallery" className="reveal-on-scroll py-24">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 grid gap-6 md:grid-cols-2 md:items-end"><div><p className="section-kicker">Galerie</p><h2 className="section-title">Looks, Farbe und Finish.</h2></div><p className="section-copy">Ausgewählte Arbeiten aus dem Salon — von präzisen Schnitten bis zu glänzenden Farbveredelungen.</p></div>
-          <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
-            <div className="grid gap-5"><img src={galleryMen} alt="Textured men's haircut" className="gallery-image aspect-square" loading="lazy" width={900} height={900} /><img src={galleryTreatment} alt="Glossy salon styling result" className="gallery-image aspect-[1.35/1]" loading="lazy" width={900} height={760} /></div>
-            <div className="grid gap-5"><img src={galleryColor} alt="Champagne balayage color transformation" className="gallery-image aspect-[1.1/1]" loading="lazy" width={900} height={1100} />
-              <div className="relative overflow-hidden border border-primary/30 bg-card">
-                <img src={galleryMen} alt="Before haircut style" className="h-80 w-full object-cover grayscale" loading="lazy" width={900} height={900} />
-                <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${beforeAfter}%` }}><img src={galleryColor} alt="After hair transformation" className="h-80 max-w-none object-cover" style={{ width: "min(85vw, 730px)" }} loading="lazy" width={900} height={1100} /></div>
-                <div className="absolute inset-y-0 w-px bg-primary" style={{ left: `${beforeAfter}%` }} />
-                <input aria-label="Before after slider" type="range" min="15" max="85" value={beforeAfter} onChange={(event) => setBeforeAfter(Number(event.target.value))} className="absolute inset-x-8 bottom-6 accent-primary" />
-              </div>
-            </div>
-          </div>
+      <section id="team" className="reveal-on-scroll py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.72fr_1.28fr] lg:px-8">
+          <div className="overflow-hidden border border-border bg-card shadow-card"><img src={doctorPortrait} alt="Dr. Alina Thordarson, Ärztin für Allgemeinmedizin" className="aspect-[4/5] w-full object-cover" loading="lazy" width={900} height={1100} /></div>
+          <div className="self-center"><p className="section-kicker">Team</p><h2 className="section-title">Medizinische Erfahrung mit menschlicher Nähe.</h2><p className="mt-6 text-lg leading-8 text-muted-foreground">Dr. Alina Thordarson maturierte am BRG Marchettigasse in Wien, promovierte 2007 an der Universität Wien und sammelte klinische Erfahrung unter anderem in Norwegen sowie in der Allgemeinmedizin mit Teilspezialisierung Psychiatrie.</p><p className="mt-4 text-lg leading-8 text-muted-foreground">Seit 01.01.2020 führt sie die Ordination in Neusiedl/Pernitz. Unterstützt wird sie von einer Ordinationsassistenz, die Patientinnen und Patienten freundlich begleitet und Anliegen strukturiert aufnimmt.</p><div className="mt-8 grid gap-4 md:grid-cols-2"><div className="border border-border bg-card p-5"><p className="font-display text-2xl text-primary">Dr. Alina Thordarson</p><p className="mt-2 text-sm text-muted-foreground">Ärztin für Allgemeinmedizin</p></div><div className="border border-border bg-card p-5"><p className="font-display text-2xl text-primary">Ordinationsassistenz</p><p className="mt-2 text-sm text-muted-foreground">Empfang, Organisation und Patientenbetreuung</p></div></div></div>
         </div>
       </section>
 
       <section className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="section-kicker">Instagram</p><h2 className="section-title">Folgen Sie unserer Arbeit @{instagramHandle}</h2></div><Button variant="glass" asChild><a href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer"><Instagram /> Follow</a></Button></div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[galleryMen, galleryColor, galleryTreatment].map((image, index) => <a key={image} href={`https://instagram.com/${instagramHandle}`} target="_blank" rel="noreferrer" className="group relative block overflow-hidden border border-border bg-card"><img src={image} alt={["Editorial barber cut from {salonName} Instagram", "Balayage color work from {salonName} Instagram", "Gloss treatment result from {salonName} Instagram"][index]} className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" /><div className="absolute inset-0 grid place-items-center bg-background/0 text-primary opacity-0 transition-all group-hover:bg-background/55 group-hover:opacity-100"><Instagram className="size-8" /></div></a>)}
-          </div>
-        </div>
+        <div className="mx-auto max-w-7xl px-5 lg:px-8"><div className="mb-12 grid gap-6 md:grid-cols-2 md:items-end"><div><p className="section-kicker">Patientenservice</p><h2 className="section-title">Alles Wichtige vor Ihrem Besuch.</h2></div><p className="section-copy">Bitte bringen Sie e-card, aktuelle Medikamentenliste, relevante Befunde und — falls vorhanden — Impfpass oder Überweisung mit.</p></div><div className="grid gap-5 md:grid-cols-3">{[[FileText, "Rezepte", "Dauermedikamente rechtzeitig vorbestellen und nach Bestätigung abholen."], [CalendarDays, "Termine", "Für planbare Anliegen bitte vorab telefonisch oder über das Formular anfragen."], [AlertCircle, "Akutfälle", "Bei starken Beschwerden bitte anrufen, damit das Team die Dringlichkeit einschätzen kann."]].map(([Icon, title, text]) => <article key={String(title)} className="border border-border bg-card p-7 shadow-card"><Icon className="mb-6 size-8 text-primary" /><h3 className="font-display text-3xl text-foreground">{String(title)}</h3><p className="mt-3 text-muted-foreground">{String(text)}</p><ChevronRight className="mt-6 size-5 text-primary" /></article>)}</div></div>
       </section>
 
-      <section className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[1fr_0.8fr] lg:px-8">
-          <div className="border border-border bg-card p-8 shadow-card md:p-12">
-            <div className="mb-6 flex gap-1 text-primary">{Array.from({ length: testimonials[activeTestimonial]?.rating ?? 5 }).map((_, index) => <Star key={index} className="size-5 fill-current" />)}</div>
-            <p className="font-display text-3xl leading-tight text-foreground md:text-5xl">“{testimonials[activeTestimonial]?.quote}”</p>
-            <div className="mt-8 flex items-center justify-between"><div><p className="text-lg text-primary">{testimonials[activeTestimonial]?.customer_name}</p><p className="text-sm text-muted-foreground">{testimonials[activeTestimonial]?.service_name}</p></div><div className="flex gap-2"><Button variant="glass" size="icon" onClick={() => setActiveTestimonial((activeTestimonial - 1 + testimonials.length) % testimonials.length)}><ChevronLeft /></Button><Button variant="glass" size="icon" onClick={() => setActiveTestimonial((activeTestimonial + 1) % testimonials.length)}><ChevronRight /></Button></div></div>
-          </div>
-          <div className="grid gap-5">
-            <div className="border border-primary/30 bg-card p-7"><Gift className="mb-4 size-8 text-primary" /><h3 className="font-display text-3xl">Gutscheine</h3><p className="mt-3 text-muted-foreground">Hochwertige Gutscheine für Geburtstage, Hochzeiten und persönliche Verwöhnmomente.</p></div>
-            <div className="border border-border bg-card p-7"><Sparkles className="mb-4 size-8 text-primary" /><h3 className="font-display text-3xl">Stammkundenprogramm</h3><p className="mt-3 text-muted-foreground">Stammgäste erhalten bevorzugte Terminfenster und exklusive Pflegeangebote.</p></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="reveal-on-scroll py-24">
+      <section id="kontakt" className="reveal-on-scroll py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div><p className="section-kicker">Kontakt & Standort</p><h2 className="section-title">Besuchen Sie unseren Salon.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />{salonAddress}</p><p><Phone className="mr-3 inline size-5 text-primary" />{salonPhone}</p><p><Mail className="mr-3 inline size-5 text-primary" />hallo@deinsalon.at</p></div>
-            <div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title={`${salonName} Karte`} src="https://maps.google.com/maps?q=Wien%20Austria&t=&z=13&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale invert-[0.9]" loading="lazy" /></div>
-          </div>
-          <div className="grid gap-6">
-            <form onSubmit={submitKontakt} className="border border-border bg-card p-6 shadow-card"><div className="grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} /><Input type="email" placeholder="E-Mail" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} /><Input placeholder="Telefon" className="md:col-span-2" value={contact.phone} onChange={(event) => setContact({ ...contact, phone: event.target.value })} /></div><Textarea placeholder="Wie können wir helfen?" className="mt-4 min-h-32" value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isContacting}>{isContacting ? "Wird gesendet…" : "Nachricht senden"}</Button></form>
-            <form onSubmit={submitNewsletter} className="border border-primary/30 bg-gold-gradient p-6 text-primary-foreground"><h3 className="font-display text-3xl">10% auf den ersten Besuch</h3><p className="mt-2 text-primary-foreground/80">Abonnieren Sie Neuigkeiten, Pflegetipps und Ihren Willkommensvorteil.</p><div className="mt-5 flex flex-col gap-3 sm:flex-row"><Input type="email" placeholder="E-Mail-Adresse" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} className="bg-primary-foreground/15 text-primary-foreground placeholder:text-primary-foreground/60" /><Button variant="velvet" type="submit">Code sichern</Button></div></form>
-          </div>
+          <div><p className="section-kicker">Kontakt & Standort</p><h2 className="section-title">So erreichen Sie die Ordination.</h2><div className="mt-8 grid gap-4 text-muted-foreground"><p><MapPin className="mr-3 inline size-5 text-primary" />{practiceAddress}</p><p><Phone className="mr-3 inline size-5 text-primary" />{practicePhone}</p><p><Mail className="mr-3 inline size-5 text-primary" />{practiceEmail}</p></div><div className="mt-8 overflow-hidden border border-border bg-muted"><iframe title={`${practiceName} Karte`} src="https://maps.google.com/maps?q=Quellenstra%C3%9Fe%2018%202763%20Neusiedl%20Austria&t=&z=14&ie=UTF8&iwloc=&output=embed" className="h-72 w-full grayscale" loading="lazy" /></div></div>
+          <form onSubmit={submitKontakt} className="border border-border bg-card p-6 shadow-card md:p-8"><h3 className="font-display text-3xl text-foreground">Anfrage senden</h3><p className="mt-2 text-sm text-muted-foreground">Dieses Formular ersetzt keine Notfallversorgung. In dringenden Fällen bitte telefonisch melden.</p><div className="mt-6 grid gap-4 md:grid-cols-2"><Input placeholder="Name" value={contact.name} onChange={(event) => setContact({ ...contact, name: event.target.value })} /><Input placeholder="Telefon" value={contact.phone} onChange={(event) => setContact({ ...contact, phone: event.target.value })} /><Input type="email" placeholder="E-Mail optional" className="md:col-span-2" value={contact.email} onChange={(event) => setContact({ ...contact, email: event.target.value })} /></div><Textarea placeholder="Ihr Anliegen" className="mt-4 min-h-36" value={contact.message} onChange={(event) => setContact({ ...contact, message: event.target.value })} /><Button className="mt-5" variant="hero" type="submit" disabled={isContacting}>{isContacting ? "Wird gesendet…" : "Anfrage senden"}</Button></form>
         </div>
       </section>
 
-      <section className="reveal-on-scroll bg-section py-24">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8"><p className="section-kicker">Interner Admin</p><h2 className="section-title mb-10">Operative Salonübersicht.</h2><div className="grid gap-5 md:grid-cols-3">{[
-          [CalendarDays, "Kommende Termine", "24", "Bestätigung, reschedule, cancel"],
-          [Users, "Kundenliste", "1,842", "Profile und Bonuspunkte"],
-          [TrendingUp, "Umsatzübersicht", "€8.7k", "Tages- und Wochenüberblick"],
-        ].map(([Icon, title, value, label]) => <div key={String(title)} className="border border-border bg-card p-7 shadow-card"><Icon className="mb-6 size-8 text-primary" /><p className="text-sm uppercase tracking-[0.22em] text-muted-foreground">{String(title)}</p><p className="mt-2 font-display text-5xl text-foreground">{String(value)}</p><p className="mt-2 text-sm text-muted-foreground">{String(label)}</p></div>)}</div></div>
-      </section>
-
-      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground"><Scissors className="mx-auto mb-4 size-6 text-primary" />{salonName} — Premium Friseur- und Barber-Erlebnis in Österreich.</footer>
+      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground"><Stethoscope className="mx-auto mb-4 size-6 text-primary" />{practiceName} — {practiceSubtitle} · {practiceAddress}</footer>
     </main>
   );
 };
