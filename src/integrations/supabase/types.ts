@@ -77,6 +77,45 @@ export type Database = {
           },
         ]
       }
+      blog_posts: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          excerpt: string
+          id: string
+          is_published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          excerpt: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -179,6 +218,111 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_appointment_requests: {
+        Row: {
+          admin_notes: string | null
+          confirmed_start: string | null
+          created_at: string
+          date_of_birth: string
+          email: string
+          id: string
+          insurance_type: string
+          patient_name: string
+          patient_user_id: string | null
+          phone: string
+          preferred_date: string
+          preferred_time: string
+          reason: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          confirmed_start?: string | null
+          created_at?: string
+          date_of_birth: string
+          email: string
+          id?: string
+          insurance_type: string
+          patient_name: string
+          patient_user_id?: string | null
+          phone: string
+          preferred_date: string
+          preferred_time: string
+          reason: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          confirmed_start?: string | null
+          created_at?: string
+          date_of_birth?: string
+          email?: string
+          id?: string
+          insurance_type?: string
+          patient_name?: string
+          patient_user_id?: string | null
+          phone?: string
+          preferred_date?: string
+          preferred_time?: string
+          reason?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      medication_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          date_of_birth: string
+          dosage: string
+          email: string
+          id: string
+          last_prescription_date: string | null
+          medication_name: string
+          patient_name: string
+          patient_user_id: string | null
+          phone: string | null
+          ready_notified_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          date_of_birth: string
+          dosage: string
+          email: string
+          id?: string
+          last_prescription_date?: string | null
+          medication_name: string
+          patient_name: string
+          patient_user_id?: string | null
+          phone?: string | null
+          ready_notified_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          date_of_birth?: string
+          dosage?: string
+          email?: string
+          id?: string
+          last_prescription_date?: string | null
+          medication_name?: string
+          patient_name?: string
+          patient_user_id?: string | null
+          phone?: string | null
+          ready_notified_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           consent: boolean
@@ -200,6 +344,111 @@ export type Database = {
           discount_code?: string
           email?: string
           id?: string
+        }
+        Relationships: []
+      }
+      practice_notices: {
+        Row: {
+          body: string
+          created_at: string
+          ends_on: string | null
+          id: string
+          is_active: boolean
+          notice_type: string
+          starts_on: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_active?: boolean
+          notice_type?: string
+          starts_on?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_active?: boolean
+          notice_type?: string
+          starts_on?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          date_of_birth: string | null
+          email: string
+          full_name: string
+          id: string
+          insurance_type: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email: string
+          full_name: string
+          id?: string
+          insurance_type?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          insurance_type?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_letters: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_url: string | null
+          id: string
+          issued_at: string
+          patient_user_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          issued_at?: string
+          patient_user_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          issued_at?: string
+          patient_user_id?: string
+          title?: string
         }
         Relationships: []
       }
@@ -335,6 +584,39 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekend_duties: {
+        Row: {
+          created_at: string
+          duty_date: string
+          end_time: string
+          id: string
+          is_active: boolean
+          note: string | null
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duty_date: string
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          note?: string | null
+          start_time?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duty_date?: string
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          note?: string | null
+          start_time?: string
+          updated_at?: string
         }
         Relationships: []
       }
